@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine; 
 
 public class CannonController : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class CannonController : MonoBehaviour
     public GameObject Cannonball;
     public Transform ShotPoint;
 
-    public GameObject Explosion;
+    //public GameObject Explosion;
 
     // Update is called once per frame
     void Update()
@@ -24,8 +24,10 @@ public class CannonController : MonoBehaviour
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles +
         new Vector3(0,HorizontalRotation * rotationSpeed, VerticalRotation* rotationSpeed));
         
+        //Shoot cannonball
         if (Input.GetKeyDown(KeyCode.Space)){
-
+            GameObject CreatedCannonBall = Instantiate(Cannonball,ShotPoint.position,ShotPoint.rotation);
+            CreatedCannonBall.GetComponent<Rigidbody>().velocity = ShotPoint.transform.up * blastPower;
         }
 
 
