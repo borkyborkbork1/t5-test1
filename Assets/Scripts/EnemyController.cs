@@ -41,11 +41,11 @@ public class EnemyController : MonoBehaviour
         strings.Add("Cannon");
 
         if (strings.Contains(collision.gameObject.name)){
-/*
+
             GameObject gameController = GameObject.Find("GameController");
-             gc = gameController.GetComponent<scre>();
-            gc.Health -= 1.0f;
-*/
+            GameController gc = gameController.GetComponent<GameController>();
+            gc.CannonDamage += 1;
+
 
             Destroy(this.gameObject);
         }

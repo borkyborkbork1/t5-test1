@@ -17,7 +17,10 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (CannonDamage == 10){
+            Debug.Log("Game Over");
+            Time.timeScale = 0;
+        }
     }
 
     IEnumerator SpawnEnemies(int number)
@@ -26,7 +29,7 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < number; i++){ 
             //create enemy
-            Instantiate(Enemy, new Vector3(Random.Range(-50.0f, 50.0f), 20, 30), Quaternion.identity);
+            Instantiate(Enemy, new Vector3(Random.Range(-50.0f, 50.0f), 30, 50), Quaternion.identity);
 
             //yield on a new YieldInstruction that waits for 2 seconds.
             yield return new WaitForSeconds(5);
