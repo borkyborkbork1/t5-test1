@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4376370483859383360}
   - component: {fileID: 4376370483859383361}
-  - component: {fileID: 5372543339367321108}
-  m_Layer: 0
+  - component: {fileID: 2074772376}
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49,7 +49,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5372543339367321108
+--- !u!114 &2074772376
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,9 +58,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4376370483859383390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86578d8e6aa359c4e9b8d755a6c2f7ce, type: 3}
+  m_Script: {fileID: 11500000, guid: e7e1226c154d01f4b8d39195c4f6f8cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  killTarget: {fileID: 7008983965731872419, guid: 4eca260bd4ffe40458dd14b684d4d5d3, type: 3}
 --- !u!1 &4376370485313105531
 GameObject:
   m_ObjectHideFlags: 0
@@ -70,10 +71,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4376370485313105530}
+  - component: {fileID: 4376370485313105533}
   - component: {fileID: 4376370485313105535}
   - component: {fileID: 4376370485313105532}
-  - component: {fileID: 4376370485313105533}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,6 +95,20 @@ Transform:
   m_Father: {fileID: 4376370483859383360}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &4376370485313105533
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4376370485313105531}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &4376370485313105535
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -143,17 +158,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4376370485313105533
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4376370485313105531}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
