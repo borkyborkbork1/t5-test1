@@ -17,15 +17,15 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (CannonDamage == 10){
-            Debug.Log("Game Over");
+        if (CannonDamage == 3){
+            Debug.Log("*** Game Over ***");
             Time.timeScale = 0;
         }
     }
 
     IEnumerator SpawnEnemies(int number)
     {
-        Debug.Log("Started enemy creation at timestamp : " + Time.time);
+        //Debug.Log("Started enemy creation: " + Time.time);
 
         for (int i = 0; i < number; i++){ 
             //create enemy
@@ -35,6 +35,6 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(5);
         }
 
-        Debug.Log("Finished enemy creation at timestamp : " + Time.time);
+        //Debug.Log("Finished enemy creation: " + Time.time);
     }
 }

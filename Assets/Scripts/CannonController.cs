@@ -5,18 +5,17 @@ using UnityEngine;
 public class CannonController : MonoBehaviour
 {
 
-
+    //Cannon setup vars
     float minAngle=4;
-    float maxAngle=75;
-    public float rotationSpeed=1; //cannon rotation
-    public float blastPower=2;
+    float maxAngle=85;
+    public float rotationSpeed=1;
+    public float blastPower=5;
 
     public GameObject Cannonball;
     public Transform ShotPoint;
 
-    //public GameObject Explosion;
+    //TODO: public GameObject Explosion and sound
 
-    // Update is called once per frame
     void Update()
     {
         
@@ -27,23 +26,22 @@ public class CannonController : MonoBehaviour
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles +
         new Vector3(0,HorizontalRotation * rotationSpeed, VerticalRotation* rotationSpeed));
         
+        //fix cannonangle to 0=UP and 90=Sideways
+        //TODO: cleanup fix cannonangle so it's not kooky
         float CannonAngle = transform.eulerAngles.z;
         if (CannonAngle >= 0 && CannonAngle <= 45){
             CannonAngle += 45;
         } else if (CannonAngle <= 360 && CannonAngle >= 315) {
             CannonAngle -= 315;
         }
-        Debug.Log(CannonAngle);
-
-
+        
+        //reverse canonangle if outside limits
         if ((CannonAngle <= minAngle)) {
             transform.Rotate(0,0,1);
         } else if ((CannonAngle >= maxAngle)) {
             transform.Rotate(0,0,-1);
         }
-
-
-
+        //Debug.Log(CannonAngle);
 
         //Shoot cannonball
         if (Input.GetKeyDown(KeyCode.Space)){
