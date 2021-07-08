@@ -1,0 +1,104 @@
+2021-06-22 - TiltFive-Unity-SDK-Rev14-DebonairDraugr.zip
+	* New Control Panel
+		* Switched to Flutter-based UI.
+		* Added Wand Pairing GUI.
+		* Shows Glasses connectivity status.
+	* Added new SDK Installer / Uninstaller.
+	* Implemented additional tracked points on the wand, such as the wand tip.
+	* Fix for USB instability on some host controllers.
+	* Slightly improved wand tracking.
+	* Improved Glasses image stabilization.
+	* Known Issue: Spurious "Unsupported USB port" after fixing a backwards USB-C adapter.
+	* Known Issue: Occasional control panel crashes.
+	* Known issue: Occasional color field separation.
+
+
+2021-05-12 - TiltFive-Unity-SDK-Rev13-CollaborativeCyclops.zip
+	* Added support for scriptable render pipelines.
+	* Reorganized SDK scripts; now using assembly definitions.
+
+2021-05-03 - TiltFive-Unity-SDK-Rev12.1-BashfulBasilisk.zip
+
+	* Added support for factory-built glasses.
+
+2021-04-21 - TiltFive-Unity-SDK-Rev12-BashfulBasilisk.zip
+
+	* Added initial visual-only Wand Tracking support.
+		* Limitation: 30fps wand pose updates
+		* Known issue: Coaxial rotations (i.e. twisting the wand in place) are not yet tracked.
+	* Added post processing support.
+	* Added new scenes to sdk-examples project.
+		* These reference implementations demonstrate interaction models and UI experiments that developers may find thought-provoking or helpful while developing their own applications.
+	* New Wand firmware (0.7)
+		* Wand LED blinks green when connected to save power.
+	* Updated wand_pairing tool
+		* Pairing code sequence reduced to 4 button presses
+		* Increased stability of the pairing/updating process.
+	* Tweaked TiltFiveManager's custom inspector to separate scale and game board settings from the glasses settings.
+	* Default IPD set to 59mm
+
+2021-03-26 - TiltFive-Unity-SDK-Rev11.2-AlliterativeAlpaca.zip
+
+	* Updated wand pairing tool and pairing instructions.
+
+2021-03-25 - TiltFive-Unity-SDK-Rev11-AlliterativeAlpaca.zip
+
+	* Fixed typo in .bat file.
+
+2021-03-24 - TiltFive-Unity-SDK-Rev11-AlliterativeAlpaca.zip
+
+	* Added new Windows Driver installer.
+	* Added new Tilt Five Control Panel
+		* Known Issue: 'Help>Check for Updates' menu option on the control panel goes to a web page that doesn't exist.
+		* Known Issue: 'Tools>Logdog' and 'Tools>Liveview' menu options on the control panel show a 'something went wrong' message (Liveview and logdog are not included in this release).
+		* Known Issue: Launching the control panel on Windows computers configured for Spanish or French will result in reduced menus, missing error messages and possibly crashes.
+	* New Wand firmware (0.6)
+		* Enables the Wand to remember the most recently-paired Glasses.
+	* Analog wand joystick/trigger values now span the expected ranges.
+		* Known Issue: Wand states may occasionally be dropped when the stick is fully tilted.
+
+
+2021-03-04 - TiltFive-Unity-SDK-Rev10.zip
+
+	* Analog wand joystick/trigger values are more consistent.
+	* Renamed GetStickAxis() to GetStickTilt() in TiltFive.Input
+	* Added TryGetButton(), TryGetButtonDown(), TryGetButtonUp(), TryGetStickTilt(), TryGetTrigger() to TiltFive.Input
+	* Known issue: Wand joystick and trigger values may not reach their minimum/maximum extents (e.g. stick values may span [-0.75,0.75] instead of [-1.0, 1.0])
+
+
+2021-02-18 - TiltFive-Unity-SDK-Rev9.zip
+
+	* Fixed missing audio on Windows.
+	* Workaround on Windows for USB instability issue when connecting over SuperSpeedPlus.
+
+2021-01-25 - TiltFive-Unity-SDK-Rev8.zip
+
+	* Added initial Windows 10 support.
+
+2021-01-04 - TiltFive-Unity-SDK-Rev7.zip
+
+	* Added initial wand input support.
+	* Known issue: There may be some drift/bias on the joystick for this release. This can be mitigated somewhat just by tilting the stick all the way around to calibrate it.
+
+2020-11-02 - TiltFive-Unity-SDK-Rev5.zip
+
+	* Enabled experimental audio out over the glasses speakers.
+
+2020-10-24 - TiltFive-Unity-SDK-Rev4.zip
+
+	* Fixed bug causing reduced horizontal resolution.
+	* Added stereoscopic preview mode.
+	* Added letterboxing/pillarboxing when previewing the glasses cameras.
+
+2020-10-08 - TiltFive-Unity-SDK-Rev3.zip
+
+	* Replaced udev rules setup script with .deb executable.
+
+2020-10-06 - TiltFive-Unity-SDK-Rev2.zip
+
+	* Fixed an issue that sometimes caused tracking to fail on initial attempts to boot the glasses.
+	* Increased the FOV of the projected image.
+
+2020-09-29 -
+
+	* Initial Release

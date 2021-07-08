@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -21,20 +20,26 @@ public class GameController : MonoBehaviour
             Debug.Log("*** Game Over ***");
             Time.timeScale = 0;
         }
+
+        
     }
+
+
+
+
+
 
     IEnumerator SpawnEnemies(int number)
     {
-        //Debug.Log("Started enemy creation: " + Time.time);
-
         for (int i = 0; i < number; i++){ 
             //create enemy
-            Instantiate(Enemy, new Vector3(Random.Range(-50.0f, 50.0f), 30, 50), Quaternion.identity);
+            float EnemyZLocation = Random.Range(-30f, 30f);
+            
+            Instantiate(Enemy, new Vector3(10, 30, EnemyZLocation), Quaternion.identity);
+            //Debug.Log(EnemyZLocation);
 
             //yield on a new YieldInstruction that waits for 2 seconds.
             yield return new WaitForSeconds(5);
         }
-
-        //Debug.Log("Finished enemy creation: " + Time.time);
     }
 }

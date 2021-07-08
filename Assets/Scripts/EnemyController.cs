@@ -24,6 +24,7 @@ public class EnemyController : MonoBehaviour
 
                 NavMeshAgent agent = GetComponent<NavMeshAgent>();
                 agent.destination = killTarget.position; 
+                agent.speed = 1;
 
                 /*
                 float distanceToGround = transform.position.y - hit.distance;

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine; 
+using T5Input = TiltFive.Input;
 
 public class CannonController : MonoBehaviour
 {
@@ -9,16 +10,18 @@ public class CannonController : MonoBehaviour
     float minAngle=4;
     float maxAngle=85;
     public float rotationSpeed=1;
-    public float blastPower=5;
+    public float blastPower=30f;
 
     public GameObject Cannonball;
     public Transform ShotPoint;
+
+    bool canshoot = true;
 
     //TODO: public GameObject Explosion and sound
 
     void Update()
     {
-        
+      
         //Rotate attached object (cannon)
         float HorizontalRotation = Input.GetAxis("Horizontal");
         float VerticalRotation = Input.GetAxis("Vertical");
@@ -44,11 +47,28 @@ public class CannonController : MonoBehaviour
         //Debug.Log(CannonAngle);
 
         //Shoot cannonball
-        if (Input.GetKeyDown(KeyCode.Space)){
-            GameObject CreatedCannonBall = Instantiate(Cannonball,ShotPoint.position,ShotPoint.rotation);
-            CreatedCannonBall.GetComponent<Rigidbody>().velocity = ShotPoint.transform.up * blastPower;
+        //if (Input.GetKeyDown(KeyCode.Space)){
+        if ((T5Input.GetTrigger() >= .3)) {
+            Debug.Log("Trigger press");
+
+            if (canshoot) {
+                StartCoroutine (FireCannon ()); 
+                Debug.Log("Shot off!!");
+            }
+
         }
 
+
+        IEnumerator FireCannon() {
+            canshoot = false;
+
+            GameObject CreatedCannonBall = Instantiate(Cannonball,ShotPoint.position,ShotPoint.rotation);
+            CreatedCannonBall.GetComponent<Rigidbody>().velocity = ShotPoint.transform.up * blastPower;
+
+            yield return new WaitForSeconds (.2f);
+            canshoot = true;
+    
+        }
 
     }
 }
