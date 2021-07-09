@@ -16,17 +16,12 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (CannonDamage == 3){
+        if (CannonDamage == 30){
             Debug.Log("*** Game Over ***");
             Time.timeScale = 0;
         }
 
-        
     }
-
-
-
-
 
 
     IEnumerator SpawnEnemies(int number)

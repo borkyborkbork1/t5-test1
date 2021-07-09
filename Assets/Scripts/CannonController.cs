@@ -14,21 +14,32 @@ public class CannonController : MonoBehaviour
 
     public GameObject Cannonball;
     public Transform ShotPoint;
+    private GameObject T5Wand;
 
     bool canshoot = true;
 
     //TODO: public GameObject Explosion and sound
 
+    void Start(){
+        T5Wand = GameObject.Find ("TiltFiveWand");
+    }
+
     void Update()
     {
       
         //Rotate attached object (cannon)
+        transform.rotation = T5Wand.transform.rotation;
+        transform.rotation *= Quaternion.Euler(-90, 130, 0); // this adds a 90 degrees Y rotation
+/*       
         float HorizontalRotation = Input.GetAxis("Horizontal");
         float VerticalRotation = Input.GetAxis("Vertical");
 
         transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles +
         new Vector3(0,HorizontalRotation * rotationSpeed, VerticalRotation* rotationSpeed));
+*/  
+
         
+
         //fix cannonangle to 0=UP and 90=Sideways
         //TODO: cleanup fix cannonangle so it's not kooky
         float CannonAngle = transform.eulerAngles.z;
@@ -47,13 +58,12 @@ public class CannonController : MonoBehaviour
         //Debug.Log(CannonAngle);
 
         //Shoot cannonball
-        //if (Input.GetKeyDown(KeyCode.Space)){
-        if ((T5Input.GetTrigger() >= .3)) {
-            Debug.Log("Trigger press");
+        if ( (T5Input.GetTrigger() >= .3) || (Input.GetKeyDown(KeyCode.Space)) ) {
+            //Debug.Log("Trigger press");
 
             if (canshoot) {
                 StartCoroutine (FireCannon ()); 
-                Debug.Log("Shot off!!");
+                //Debug.Log("Shot off!!");
             }
 
         }
