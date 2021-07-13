@@ -7,17 +7,33 @@ public class EnemyController : MonoBehaviour
 {
     
     public Transform killTarget;
-    int onGround = 0;
+    public int onGround = 0;
+    
+    private Rigidbody rb;
 
     void FixedUpdate() {
-        RaycastHit hit;
+        //Only raycast for layer 7 (ground layer)
+        LayerMask layerMask = 1 << 7;
+        RaycastHit enemyDown;
         Ray downRay = new Ray(transform.position, -Vector3.up);
         
-        
-        if (Physics.Raycast(downRay, out hit)){
-            //Debug.Log("raycast hit!!!  -- " + hit.distance);
+        //control enemy movement (not hits)
+        //downray, the hit object, max distance, layer to allow ray to collide with
+        if (Physics.Raycast(downRay, out enemyDown, 50f, layerMask)){
+            //Debug.DrawLine(transform.position, new Vector3(transform.position.x, 0, transform.position.z), Color.red);
             
-            if (hit.distance <= 1.5 && onGround == 0){
+            if (enemyDown.distance <= 1.5 && onGround == 0){
+
+                //Debug.Log("raycast hit distance  -- " + enemyDown.distance);
+                //Debug.DrawLine(transform.position, new Vector3(transform.position.x, 0, transform.position.z), Color.cyan);
+                //Time.timeScale = 0;
+
+                //if the parachutist is falling without parachute then kill him when he hits the ground
+                rb = gameObject.GetComponent<Rigidbody>();
+                if (rb.drag == 0f){
+                    Destroy(this.gameObject);
+                }
+
                 onGround = 1;
 
                 gameObject.AddComponent<NavMeshAgent>();
@@ -26,11 +42,6 @@ public class EnemyController : MonoBehaviour
                 agent.destination = killTarget.position; 
                 agent.speed = 1;
 
-                /*
-                float distanceToGround = transform.position.y - hit.distance;
-                Debug.Log("Distance to ground: "+distanceToGround);
-                Debug.Log("On ground");
-                */
             }
 
         }

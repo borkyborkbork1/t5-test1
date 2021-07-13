@@ -42,8 +42,15 @@ public class DrawProjection : MonoBehaviour
 
         //build array for rendering an arced line based on position, velocity & gravity
         for (float t = 0; t < numPoints; t += timeBetweenPoints){
+            
+            //arc projection
             Vector3 newPoint = startingPosition + t * startingVelocity;
             newPoint.y = startingPosition.y + startingVelocity.y * t + Physics.gravity.y/2f * t * t;
+            
+            //TODO: straight line projection X/Z only
+            //Vector3 newPoint = startingPosition + t * startingVelocity;
+            //newPoint.y = startingPosition.y + startingVelocity.y * t + Physics.gravity.y/2f * t * t;
+            
             points.Add(newPoint);
 
             //end building array if the new point collides with anything

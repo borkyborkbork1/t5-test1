@@ -5,6 +5,8 @@ using UnityEngine;
 public class CannonBallController : MonoBehaviour
 {
 
+    AudioSource source;
+
     void OnCollisionEnter(Collision collision){
 
 
@@ -18,9 +20,36 @@ public class CannonBallController : MonoBehaviour
         if (strings.Contains(collision.gameObject.name.Substring(0,5))){
 
             if (collision.gameObject.name.Substring(0,5) == "Enemy"){
-                Destroy(collision.gameObject);
+                //Only raycast for layer 7 (ground layer)
+                LayerMask layerMask = 1 << 7;
+                RaycastHit enemyDown;
+                Ray downRay = new Ray(transform.position, -Vector3.up);
+
+                //control enemy movement (not hits)
+                //downray, the hit object, max distance, layer to allow ray to collide with
+                if (Physics.Raycast(downRay, out enemyDown, 50f, layerMask) ){
+                    if (enemyDown.distance >= 4){
+                        ///enemy hit in air
+                        collision.rigidbody.drag=0;
+                        //don't let parachutist get knocked away
+                        collision.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                        
+                        //play falling audio
+                        source = collision.gameObject.GetComponent<AudioSource>();
+                        source.Play();
+ 
+
+                    } else {
+                        ///enemy hit on ground
+                        Destroy(collision.gameObject);
+                        Destroy(this.gameObject);
+                    }
+                } 
+
+            } else {
+                Destroy(this.gameObject);
             }
-            Destroy(this.gameObject);
+            
         }
     }
 }

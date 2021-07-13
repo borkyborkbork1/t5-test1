@@ -10,13 +10,13 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnEnemies(5));
+        StartCoroutine(SpawnEnemies(50));
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (CannonDamage == 30){
+        if (CannonDamage == 50){
             Debug.Log("*** Game Over ***");
             Time.timeScale = 0;
         }
