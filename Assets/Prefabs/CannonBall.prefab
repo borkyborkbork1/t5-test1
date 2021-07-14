@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 228109760596496278}
+  - component: {fileID: 1058919825546106995}
   - component: {fileID: 228109760596496277}
   - component: {fileID: 228109760596496276}
   - component: {fileID: 228109760596496275}
   - component: {fileID: 228109760596496274}
-  - component: {fileID: 1058919825546106995}
   - component: {fileID: -8037067200768189365}
   m_Layer: 6
   m_Name: CannonBall
@@ -36,6 +36,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1058919825546106995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 228109760596496273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879e028d769d55a4c8f1c56829ac7908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyFalling: {fileID: 8300000, guid: 417ad02d7cfeb1d4fbb3f32907d014ba, type: 3}
+  enemyHitGround: {fileID: 8300000, guid: 7f6b60b5538f57a4182fce599be7b6a7, type: 3}
+  enemyDied: {fileID: 8300000, guid: e81f3733b890a3445a4fe8703f3e1483, type: 3}
+  volume: 1
 --- !u!33 &228109760596496277
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -114,18 +130,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1058919825546106995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228109760596496273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 879e028d769d55a4c8f1c56829ac7908, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!96 &-8037067200768189365
 TrailRenderer:
   serializedVersion: 2

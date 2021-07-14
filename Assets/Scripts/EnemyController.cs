@@ -11,6 +11,10 @@ public class EnemyController : MonoBehaviour
     
     private Rigidbody rb;
 
+    void Start(){
+    }
+
+
     void FixedUpdate() {
         //Only raycast for layer 7 (ground layer)
         LayerMask layerMask = 1 << 7;
@@ -35,7 +39,7 @@ public class EnemyController : MonoBehaviour
                 }
 
                 onGround = 1;
-
+                gameObject.transform.Find("parachute").gameObject.SetActive(false);
                 gameObject.AddComponent<NavMeshAgent>();
 
                 NavMeshAgent agent = GetComponent<NavMeshAgent>();

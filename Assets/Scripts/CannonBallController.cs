@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class CannonBallController : MonoBehaviour
 {
+    public AudioClip enemyFalling;
+    public AudioClip enemyHitGround;
+    public AudioClip enemyDied;
+    public float volume=1f;
 
-    AudioSource source;
 
     void OnCollisionEnter(Collision collision){
 
@@ -17,8 +20,10 @@ public class CannonBallController : MonoBehaviour
         strings.Add("Groun");
         strings.Add("Enemy");
 
+
         if (strings.Contains(collision.gameObject.name.Substring(0,5))){
 
+            //controls what happens when enemy is hit
             if (collision.gameObject.name.Substring(0,5) == "Enemy"){
                 //Only raycast for layer 7 (ground layer)
                 LayerMask layerMask = 1 << 7;
@@ -28,25 +33,27 @@ public class CannonBallController : MonoBehaviour
                 //control enemy movement (not hits)
                 //downray, the hit object, max distance, layer to allow ray to collide with
                 if (Physics.Raycast(downRay, out enemyDown, 50f, layerMask) ){
-                    if (enemyDown.distance >= 4){
+                    if (enemyDown.distance >= 2){
                         ///enemy hit in air
                         collision.rigidbody.drag=0;
                         //don't let parachutist get knocked away
                         collision.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-                        
-                        //play falling audio
-                        source = collision.gameObject.GetComponent<AudioSource>();
-                        source.Play();
- 
+                        //remove parachute
+                        collision.transform.Find("parachute").gameObject.SetActive(false);
 
+                        AudioSource.PlayClipAtPoint(enemyFalling, collision.transform.position, volume);
+ 
                     } else {
                         ///enemy hit on ground
+                        AudioSource.PlayClipAtPoint(enemyHitGround, collision.transform.position, volume);
                         Destroy(collision.gameObject);
                         Destroy(this.gameObject);
+                        
                     }
                 } 
 
             } else {
+                AudioSource.PlayClipAtPoint(enemyDied, collision.transform.position, volume);
                 Destroy(this.gameObject);
             }
             

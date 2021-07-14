@@ -14,9 +14,14 @@ public class CannonController : MonoBehaviour
 
     public GameObject Cannonball;
     public Transform ShotPoint;
-    private GameObject T5Wand;
+
+    public AudioClip cannonFire;
+    public float volume=1f;
 
     bool canshoot = true;
+    private GameObject T5Wand;
+
+
 
     //TODO: public GameObject Explosion and sound
 
@@ -85,6 +90,7 @@ public class CannonController : MonoBehaviour
 
             GameObject CreatedCannonBall = Instantiate(Cannonball,ShotPoint.position,ShotPoint.rotation);
             CreatedCannonBall.GetComponent<Rigidbody>().velocity = ShotPoint.transform.up * blastPower;
+            AudioSource.PlayClipAtPoint(cannonFire, transform.position, volume);
 
             yield return new WaitForSeconds (.2f);
             canshoot = true;
