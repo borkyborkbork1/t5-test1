@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4376370483859383360}
   - component: {fileID: 4376370483859383361}
   - component: {fileID: 2074772376}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,9 +64,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   killTarget: {fileID: 7008983965731872419, guid: 4eca260bd4ffe40458dd14b684d4d5d3, type: 3}
   onGround: 0
-  falling: {fileID: 0}
-  hitground: {fileID: 0}
-  died: {fileID: 0}
 --- !u!1 &4376370485313105531
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,7 +76,7 @@ GameObject:
   - component: {fileID: 4376370485313105533}
   - component: {fileID: 4376370485313105535}
   - component: {fileID: 4376370485313105532}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -229,6 +226,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: b53e65d0c58b5b24e9668f606574537d, type: 3}
       propertyPath: m_Name
       value: parachute
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b53e65d0c58b5b24e9668f606574537d, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b53e65d0c58b5b24e9668f606574537d, type: 3}

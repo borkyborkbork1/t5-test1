@@ -27,14 +27,16 @@ public class GameController : MonoBehaviour
     IEnumerator SpawnEnemies(int number)
     {
         for (int i = 0; i < number; i++){ 
-            //create enemy
-            float EnemyZLocation = Random.Range(-30f, 30f);
+            //create enemy          
+            float EnemyZLocation1 = Random.Range(-30f, -7f);
+            float EnemyZLocation2 = Random.Range(30f, 7f);
             
-            Instantiate(Enemy, new Vector3(10, 30, EnemyZLocation), Quaternion.identity);
+            Instantiate(Enemy, new Vector3(-20, 30, EnemyZLocation1), Quaternion.identity);
+            Instantiate(Enemy, new Vector3(-20, 30, EnemyZLocation2), Quaternion.identity);
             //Debug.Log(EnemyZLocation);
 
             //yield on a new YieldInstruction that waits for 2 seconds.
-            yield return new WaitForSeconds(5);
+            yield return new WaitForSeconds(10);
         }
     }
 }
