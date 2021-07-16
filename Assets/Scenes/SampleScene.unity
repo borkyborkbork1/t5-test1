@@ -682,13 +682,13 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: cbb07f6072bda6d449076d200910cb56, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.103
+  m_Volume: 0.165
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 29
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -912,8 +912,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17e57ae52c530324bab2bcbd098da180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Enemy: {fileID: 4376370483859383390, guid: bbfb2e643eb9859469b79c58765db0df, type: 3}
   CannonDamage: 0
+  airplane: {fileID: 495870165712868569, guid: 53b57eb2cc2612246b4f72b352f400f5, type: 3}
 --- !u!4 &1815929556
 Transform:
   m_ObjectHideFlags: 0
@@ -979,14 +979,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7008983965731872428, guid: 4eca260bd4ffe40458dd14b684d4d5d3, type: 3}
-      propertyPath: blastPower
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 7008983965731872428, guid: 4eca260bd4ffe40458dd14b684d4d5d3, type: 3}
-      propertyPath: cannonFire
-      value: 
-      objectReference: {fileID: 8300000, guid: b19f1bec19a4e544fb7bcecd93b1d2ef, type: 3}
     - target: {fileID: 7008983965731872431, guid: 4eca260bd4ffe40458dd14b684d4d5d3, type: 3}
       propertyPath: m_Name
       value: Cannon

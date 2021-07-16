@@ -4,13 +4,17 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
-    public GameObject Enemy;
     public int CannonDamage = 0;
+    public GameObject airplane;
+    Quaternion airplaneRotation = Quaternion.Euler(0, -90, 0);
+    Vector3 airplaneSpawn;
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnEnemies(50));
+        airplaneSpawn = new Vector3(-15,20,38);
+        StartCoroutine(SpawnPlanes(50,10,30));
+        
     }
 
     // Update is called once per frame
@@ -21,22 +25,23 @@ public class GameController : MonoBehaviour
             Time.timeScale = 0;
         }
 
+
     }
 
-
-    IEnumerator SpawnEnemies(int number)
-    {
+IEnumerator SpawnPlanes(int number,int minSpacing,int maxSpacing){
+        //create enemies      
         for (int i = 0; i < number; i++){ 
-            //create enemy          
-            float EnemyZLocation1 = Random.Range(-30f, -7f);
-            float EnemyZLocation2 = Random.Range(30f, 7f);
+            //space planes randomly between passed min/max seconds
+            float spacing = Random.Range(minSpacing, maxSpacing); 
             
-            Instantiate(Enemy, new Vector3(-20, 30, EnemyZLocation1), Quaternion.identity);
-            Instantiate(Enemy, new Vector3(-20, 30, EnemyZLocation2), Quaternion.identity);
-            //Debug.Log(EnemyZLocation);
+            
+            Instantiate(airplane, airplaneSpawn, airplaneRotation);
 
-            //yield on a new YieldInstruction that waits for 2 seconds.
-            yield return new WaitForSeconds(10);
+            //yield on a new YieldInstruction that waits for spacing seconds.
+            yield return new WaitForSeconds(spacing);
+
         }
     }
+
+    
 }

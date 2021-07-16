@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     
+    public AudioClip enemyHitGround;
     public Transform killTarget;
     public int onGround = 0;
     

@@ -5,8 +5,8 @@ using UnityEngine;
 public class CannonBallController : MonoBehaviour
 {
     public AudioClip enemyFalling;
-    public AudioClip enemyHitGround;
     public AudioClip enemyDied;
+    public AudioClip cannonballHitGround;
     public float volume=1f;
 
 
@@ -34,7 +34,7 @@ public class CannonBallController : MonoBehaviour
                 //downray, the hit object, max distance, layer to allow ray to collide with
                 if (Physics.Raycast(downRay, out enemyDown, 50f, layerMask) ){
                     if (enemyDown.distance >= 2){
-                        ///enemy hit in air
+                        ///enemy hit in air so remove all drag so he falls
                         collision.rigidbody.drag=0;
                         //don't let parachutist get knocked away
                         collision.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
@@ -44,8 +44,8 @@ public class CannonBallController : MonoBehaviour
                         AudioSource.PlayClipAtPoint(enemyFalling, collision.transform.position, volume);
  
                     } else {
-                        ///enemy hit on ground
-                        AudioSource.PlayClipAtPoint(enemyHitGround, collision.transform.position, volume);
+                        //enemy hit while on ground
+                        AudioSource.PlayClipAtPoint(enemyDied, collision.transform.position, volume);
                         Destroy(collision.gameObject);
                         Destroy(this.gameObject);
                         
@@ -53,6 +53,7 @@ public class CannonBallController : MonoBehaviour
                 } 
 
             } else {
+                //cannonball hit ground
                 AudioSource.PlayClipAtPoint(enemyDied, collision.transform.position, volume);
                 Destroy(this.gameObject);
             }
