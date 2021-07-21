@@ -2,17 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using T5Input = TiltFive.Input;
 
 public class EnemyController : MonoBehaviour
 {
     
     public AudioClip enemyHitGround;
+    public AudioClip enemyReachesCannon;
     public Transform killTarget;
     public int onGround = 0;
+    private GameObject T5Wand;
+    private GameObject T5Glasses;
     
     private Rigidbody rb;
 
     void Start(){
+        if (T5Input.GetWandAvailability()){
+            T5Wand = GameObject.Find ("TiltFiveWand");
+            T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
+        }
     }
 
 
@@ -36,6 +44,8 @@ public class EnemyController : MonoBehaviour
                 //if the parachutist is falling without parachute then kill him when he hits the ground
                 rb = gameObject.GetComponent<Rigidbody>();
                 if (rb.drag == 0f){
+                    //if enemy hits ground
+                    AudioSource.PlayClipAtPoint(enemyHitGround, T5Glasses.transform.position, 1f);
                     Destroy(this.gameObject);
                 }
 
@@ -53,18 +63,21 @@ public class EnemyController : MonoBehaviour
     }
 
     void OnCollisionEnter(Collision collision){
-        // build list of objects enemy can be destroyed by
-        List<string> strings = new List<string>();
-        strings.Add("Cannon");
 
-        if (strings.Contains(collision.gameObject.name)){
+        Debug.Log("Enemy has collided with:" + collision.gameObject.name);
 
+        if (collision.gameObject.name == "Cannon"){
+            //if enemy hits cannon 
             GameObject gameController = GameObject.Find("GameController");
             GameController gc = gameController.GetComponent<GameController>();
             gc.CannonDamage += 1;
+            AudioSource.PlayClipAtPoint(enemyReachesCannon, T5Glasses.transform.position, 1f);
+            Destroy(this.gameObject);    
 
+        } else {
 
-            Destroy(this.gameObject);
+            //Debug.Log("Enemy has collided with unhandled object:" + collision.gameObject.name);
+            //Destroy(this.gameObject);
         }
     }
 

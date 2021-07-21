@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using T5Input = TiltFive.Input;
 
 public class CannonBallController : MonoBehaviour
 {
@@ -8,7 +9,16 @@ public class CannonBallController : MonoBehaviour
     public AudioClip enemyDied;
     public AudioClip cannonballHitGround;
     public float volume=1f;
+    private GameObject T5Wand;
+    private GameObject T5Glasses;
+    private Vector3 AudioPosition;
 
+    void Start(){
+        if (T5Input.GetWandAvailability()){
+            T5Wand = GameObject.Find ("TiltFiveWand");
+            T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
+        }
+    }
 
     void OnCollisionEnter(Collision collision){
 
@@ -20,6 +30,13 @@ public class CannonBallController : MonoBehaviour
         strings.Add("Groun");
         strings.Add("Enemy");
 
+            //set AudioPosition based on if the wand & glasses are being used
+            if (T5Input.GetWandAvailability()){
+                //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
+                AudioPosition=T5Glasses.transform.position;
+            } else {
+                AudioPosition=collision.transform.position;
+            }
 
         if (strings.Contains(collision.gameObject.name.Substring(0,5))){
 
@@ -36,16 +53,19 @@ public class CannonBallController : MonoBehaviour
                     if (enemyDown.distance >= 2){
                         ///enemy hit in air so remove all drag so he falls
                         collision.rigidbody.drag=0;
+                        collision.rigidbody.mass=1000;
+                        //don't let it get hit again
+                        //collision.gameObject.GetComponent<BoxCollider>().enabled = false;
                         //don't let parachutist get knocked away
                         collision.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
                         //remove parachute
                         collision.transform.Find("parachute").gameObject.SetActive(false);
 
-                        AudioSource.PlayClipAtPoint(enemyFalling, collision.transform.position, volume);
+                        AudioSource.PlayClipAtPoint(enemyFalling, AudioPosition, .1f);
  
                     } else {
                         //enemy hit while on ground
-                        AudioSource.PlayClipAtPoint(enemyDied, collision.transform.position, volume);
+                        AudioSource.PlayClipAtPoint(enemyDied, AudioPosition, volume);
                         Destroy(collision.gameObject);
                         Destroy(this.gameObject);
                         
@@ -54,7 +74,7 @@ public class CannonBallController : MonoBehaviour
 
             } else {
                 //cannonball hit ground
-                AudioSource.PlayClipAtPoint(enemyDied, collision.transform.position, volume);
+                //AudioSource.PlayClipAtPoint(cannonballHitGround, AudioPosition, .05f);
                 Destroy(this.gameObject);
             }
             
