@@ -17,6 +17,7 @@ public class CannonBallController : MonoBehaviour
         if (T5Input.GetWandAvailability()){
             T5Wand = GameObject.Find ("TiltFiveWand");
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
+            Debug.Log("Wand Found");
         }
     }
 
@@ -28,15 +29,15 @@ public class CannonBallController : MonoBehaviour
         //  comparing using first 5 chars only
         List<string> strings = new List<string>();
         strings.Add("Groun");
-        strings.Add("Enemy");
+        strings.Add("Enemy"); 
 
-            //set AudioPosition based on if the wand & glasses are being used
-            if (T5Input.GetWandAvailability()){
-                //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
-                AudioPosition=T5Glasses.transform.position;
-            } else {
-                AudioPosition=collision.transform.position;
-            }
+        //set AudioPosition based on if the wand & glasses are being used
+        if (T5Input.GetWandAvailability()){
+            //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
+            AudioPosition=T5Glasses.transform.position;
+        } else {
+            AudioPosition=collision.transform.position;
+        }
 
         if (strings.Contains(collision.gameObject.name.Substring(0,5))){
 
@@ -62,6 +63,7 @@ public class CannonBallController : MonoBehaviour
                         collision.transform.Find("parachute").gameObject.SetActive(false);
 
                         AudioSource.PlayClipAtPoint(enemyFalling, AudioPosition, .1f);
+                        Debug.Log("Shot Enemy Distance to ground supposed to be >= 2 but is actually:"+enemyDown.distance);
  
                     } else {
                         //enemy hit while on ground

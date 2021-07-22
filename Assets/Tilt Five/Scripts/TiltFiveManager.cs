@@ -27,6 +27,7 @@ namespace TiltFive
     /// The Tilt Five manager.
     /// </summary>
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(-500)]
     public class TiltFiveManager : TiltFive.SingletonComponent<TiltFiveManager>
     {
         /// <summary>
@@ -94,15 +95,35 @@ namespace TiltFive
         /// </summary>
 		void Update()
         {
+            Input.Update();
+
             if (!Glasses.Validate(glassesSettings))
-			{
+            {
                 Glasses.Reset(glassesSettings);
             }
+            GetLatestPoseData();
+        }
 
+        /// <summary>
+        /// Update this instance after all components have finished executing their Update() functions.
+        /// </summary>
+        void LateUpdate()
+        {
+            // Trackables should be updated just before rendering occurs,
+            // after all Update() calls are completed.
+            // This allows any Game Board movements to be finished before we base the
+            // Glasses/Wand poses off of its pose, preventing perceived jittering.
+            GetLatestPoseData();
+        }
+
+        /// <summary>
+        /// Obtains the latest pose for all trackable objects.
+        /// </summary>
+        private void GetLatestPoseData()
+        {
             Glasses.Update(glassesSettings, scaleSettings, gameBoardSettings);
             Wand.Update(primaryWandSettings, scaleSettings, gameBoardSettings);
             Wand.Update(secondaryWandSettings, scaleSettings, gameBoardSettings);
-            Input.Update();
         }
 
         /// <summary>

@@ -31,16 +31,16 @@ public class AirplaneController : MonoBehaviour
     {
         //create enemies      
         for (int i = 0; i < number; i++){ 
-            //space enemies randomly between passed min/max seconds
-            float spacing = Random.Range(minSpacing, maxSpacing); 
-            
-            //yield on a new YieldInstruction that waits for spacingg seconds.
-            yield return new WaitForSeconds(spacing);
-            Instantiate(Enemy, gameObject.transform.position, Quaternion.identity);
-            //Debug.Log(spacing);
 
-            
-            
+            if(gameObject.transform.position.z >= -20){
+                //space enemies randomly between passed min/max seconds
+                float spacing = Random.Range(minSpacing, maxSpacing); 
+                
+                //yield on a new YieldInstruction that waits for spacingg seconds.
+                yield return new WaitForSeconds(spacing);
+                Instantiate(Enemy, gameObject.transform.position, Quaternion.identity);
+                //Debug.Log(spacing);
+            }   
         }
     }
 }

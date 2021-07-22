@@ -176,7 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleSettings:
     contentScaleUnit: 4
-    contentScaleRatio: 5
+    contentScaleRatio: 1
   gameBoardSettings:
     currentGameBoard: {fileID: 5096850158276147073}
   glassesSettings:
@@ -184,7 +184,7 @@ MonoBehaviour:
     tiltFiveXR: 1
     headPoseCamera: {fileID: 5096850156648964928}
     overrideFOV: 0
-    customFOV: 0
+    customFOV: 48
     glassesMirrorMode: 0
   primaryWandSettings:
     drivenObject: {fileID: 0}

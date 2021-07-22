@@ -13,6 +13,7 @@ public class EnemyController : MonoBehaviour
     public int onGround = 0;
     private GameObject T5Wand;
     private GameObject T5Glasses;
+    private Vector3 AudioPosition;
     
     private Rigidbody rb;
 
@@ -22,7 +23,6 @@ public class EnemyController : MonoBehaviour
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
         }
     }
-
 
     void FixedUpdate() {
         //Only raycast for layer 7 (ground layer)
@@ -37,15 +37,13 @@ public class EnemyController : MonoBehaviour
             
             if (enemyDown.distance <= 1.5 && onGround == 0){
 
-                //Debug.Log("raycast hit distance  -- " + enemyDown.distance);
-                //Debug.DrawLine(transform.position, new Vector3(transform.position.x, 0, transform.position.z), Color.cyan);
-                //Time.timeScale = 0;
-
                 //if the parachutist is falling without parachute then kill him when he hits the ground
                 rb = gameObject.GetComponent<Rigidbody>();
                 if (rb.drag == 0f){
                     //if enemy hits ground
-                    AudioSource.PlayClipAtPoint(enemyHitGround, T5Glasses.transform.position, 1f);
+                    if (T5Input.GetWandAvailability()){
+                        AudioSource.PlayClipAtPoint(enemyHitGround, T5Glasses.transform.position, 1f);
+                    }
                     Destroy(this.gameObject);
                 }
 
@@ -64,6 +62,14 @@ public class EnemyController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision){
 
+        //set AudioPosition based on if the wand & glasses are being used
+        if (T5Input.GetWandAvailability()){
+            //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
+            AudioPosition=T5Glasses.transform.position;
+        } else {
+            AudioPosition=collision.transform.position;
+        }
+
         Debug.Log("Enemy has collided with:" + collision.gameObject.name);
 
         if (collision.gameObject.name == "Cannon"){
@@ -71,7 +77,7 @@ public class EnemyController : MonoBehaviour
             GameObject gameController = GameObject.Find("GameController");
             GameController gc = gameController.GetComponent<GameController>();
             gc.CannonDamage += 1;
-            AudioSource.PlayClipAtPoint(enemyReachesCannon, T5Glasses.transform.position, 1f);
+            AudioSource.PlayClipAtPoint(enemyReachesCannon, AudioPosition, 1f);
             Destroy(this.gameObject);    
 
         } else {

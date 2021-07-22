@@ -32,7 +32,7 @@ namespace TiltFive
 
         public const float MIN_FOV = 35f;
         public const float MAX_FOV = 64f;
-        public const float DEFAULT_FOV = 55f;
+        public const float DEFAULT_FOV = 48f;
 
         public const float IPD_UGBL = 0.059f;
 
