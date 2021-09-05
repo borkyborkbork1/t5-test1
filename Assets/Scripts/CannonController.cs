@@ -16,17 +16,27 @@ public class CannonController : MonoBehaviour
     public Transform ShotPoint;
 
     public AudioClip cannonFire;
-    public float volume=1f;
 
     bool canshoot = true;
     private GameObject T5Wand;
-
-
-
-    //TODO: public GameObject Explosion and sound
+    private GameObject T5Glasses;
+    private Vector3 AudioPosition;
 
     void Start(){
-        T5Wand = GameObject.Find ("TiltFiveWand");
+        
+        if (T5Input.GetWandAvailability()){
+            T5Wand = GameObject.Find ("TiltFiveWand");
+            T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
+            Debug.Log("Wand Found");
+        }
+
+        //set AudioPosition based on if the wand & glasses are being used
+        if (T5Input.GetWandAvailability()){
+            //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
+            AudioPosition=T5Glasses.transform.position;
+        } else {
+            AudioPosition=this.gameObject.transform.position;
+        }
     }
 
     void Update()
@@ -36,7 +46,7 @@ public class CannonController : MonoBehaviour
         if (T5Input.GetWandAvailability()){
             //Rotate cannon based on the T5Wand
             transform.rotation = T5Wand.transform.rotation;
-            transform.rotation *= Quaternion.Euler(-90, 130, 0); // this adds a 90 degrees Y rotation due to T5 Driver bug
+            transform.rotation *= Quaternion.Euler(-90, 130, 0); 
 
             //fix cannonangle to 0=UP and 90=Sideways
             //TODO: cleanup fix cannonangle so it's not kooky
@@ -56,15 +66,19 @@ public class CannonController : MonoBehaviour
             //Debug.Log(CannonAngle);
 
             //fire cannon on wand trigger
-            if ( (T5Input.GetTrigger() >= .3) ) {
+            if (T5Input.GetTrigger() >= .3) {
                 //Debug.Log("Trigger press");
 
                 if (canshoot) {
                     StartCoroutine (FireCannon ()); 
                     //Debug.Log("Shot off!!");
                 }
+            } else if (T5Input.GetButton(T5Input.WandButton.System)){
+                Debug.Log("Quitting application!!");
+                Time.timeScale = 0; //Stop application frame processing
+                Application.Quit();
             }
-
+        
         } else {
             //Rotate cannon based on WASD
             float HorizontalRotation = Input.GetAxis("Horizontal");
@@ -90,9 +104,10 @@ public class CannonController : MonoBehaviour
 
             GameObject CreatedCannonBall = Instantiate(Cannonball,ShotPoint.position,ShotPoint.rotation);
             CreatedCannonBall.GetComponent<Rigidbody>().velocity = ShotPoint.transform.up * blastPower;
-            AudioSource.PlayClipAtPoint(cannonFire, transform.position, volume);
+            
+            AudioSource.PlayClipAtPoint(cannonFire, AudioPosition, 1f);
 
-            yield return new WaitForSeconds (.2f);
+            yield return new WaitForSeconds (.5f);
             canshoot = true;
     
         }

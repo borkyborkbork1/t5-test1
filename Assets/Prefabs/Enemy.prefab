@@ -43,7 +43,7 @@ Rigidbody:
   m_GameObject: {fileID: 4376370483859383390}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 10
+  m_Drag: 5
   m_AngularDrag: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -65,7 +65,9 @@ MonoBehaviour:
   enemyHitGround: {fileID: 8300000, guid: 7f6b60b5538f57a4182fce599be7b6a7, type: 3}
   enemyReachesCannon: {fileID: 8300000, guid: c997db3b47c158c4ab0e4fbdf241fc95, type: 3}
   killTarget: {fileID: 4014136529444547572, guid: ba2dbbbe8d8212542967649f3336252a, type: 3}
+  parachutistRunSpeed: 1
   onGround: 0
+  Explosion: {fileID: 4347091716195491808, guid: 306a229316cda9f4fb8fdfaa4736dd70, type: 3}
 --- !u!1 &4376370485313105531
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,11 +12,13 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Start the creating planes
+        //-- (number of planes, minimum, max for random seconds between them)    
         StartCoroutine(SpawnPlanes(50,10,30));
 
         //wait a bit then start spamming planes
-        new WaitForSeconds(90);
-        StartCoroutine(SpawnPlanes(50,5,10));
+        //new WaitForSeconds(90);
+        //StartCoroutine(SpawnPlanes(50,5,10));
     }
 
     // Update is called once per frame
@@ -28,8 +30,9 @@ public class GameController : MonoBehaviour
         }
     }
 
+    //create enemy planes (number of planes, minimum & max for random seconds between them)     
+    //-- enemy parachutists are controlled by AirplaneController
     IEnumerator SpawnPlanes(int number,int minSpacing,int maxSpacing){
-        //create enemies (number of planes, minimum & max for random seconds between them)     
         for (int i = 0; i < number; i++){ 
             //space planes randomly between passed min/max seconds
             float spacing = Random.Range(minSpacing, maxSpacing); 

@@ -10,7 +10,9 @@ public class EnemyController : MonoBehaviour
     public AudioClip enemyHitGround;
     public AudioClip enemyReachesCannon;
     public Transform killTarget;
+    public int parachutistRunSpeed = 30;
     public int onGround = 0;
+    public GameObject Explosion;
     private GameObject T5Wand;
     private GameObject T5Glasses;
     private Vector3 AudioPosition;
@@ -40,7 +42,7 @@ public class EnemyController : MonoBehaviour
                 //if the parachutist is falling without parachute then kill him when he hits the ground
                 rb = gameObject.GetComponent<Rigidbody>();
                 if (rb.drag == 0f){
-                    //if enemy hits ground
+                    //if enemy hits ground & there is T5 Glasses play squash sound near head position
                     if (T5Input.GetWandAvailability()){
                         AudioSource.PlayClipAtPoint(enemyHitGround, T5Glasses.transform.position, 1f);
                     }
@@ -53,7 +55,7 @@ public class EnemyController : MonoBehaviour
 
                 NavMeshAgent agent = GetComponent<NavMeshAgent>();
                 agent.destination = killTarget.position; 
-                agent.speed = 1;
+                agent.speed = parachutistRunSpeed;
 
             }
 
@@ -78,7 +80,10 @@ public class EnemyController : MonoBehaviour
             GameController gc = gameController.GetComponent<GameController>();
             gc.CannonDamage += 1;
             AudioSource.PlayClipAtPoint(enemyReachesCannon, AudioPosition, 1f);
-            Destroy(this.gameObject);    
+             
+            GameObject ExplosionInstance=Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
+            Destroy(ExplosionInstance,4);
+            Destroy(this.gameObject);   
 
         } else {
 

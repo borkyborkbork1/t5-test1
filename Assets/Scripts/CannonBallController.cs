@@ -76,7 +76,7 @@ public class CannonBallController : MonoBehaviour
 
             } else {
                 //cannonball hit ground
-                //AudioSource.PlayClipAtPoint(cannonballHitGround, AudioPosition, .05f);
+                AudioSource.PlayClipAtPoint(cannonballHitGround, AudioPosition, .05f);
                 Destroy(this.gameObject);
             }
             

@@ -10,8 +10,9 @@ public class AirplaneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //spawn enemies. Pass in number, min & max seconds between
-        //spacing really controlls how many are spawned due to plane being destroyed
+        //spawn enemy parachutists
+        //-- (Pass in number, min & max seconds between)
+        //spacing really controlls how many are spawned due to plane being destroyed when it gets offscreen
         StartCoroutine(SpawnEnemies(100, 2, 6));
     }
 
@@ -26,10 +27,10 @@ public class AirplaneController : MonoBehaviour
         }
     }
 
-
+    //create enemy parachutists
+    //-- (Pass in number, min & max seconds between)
     IEnumerator SpawnEnemies(int number, int minSpacing, int maxSpacing)
-    {
-        //create enemies      
+    {    
         for (int i = 0; i < number; i++){ 
 
             if(gameObject.transform.position.z >= -20){
