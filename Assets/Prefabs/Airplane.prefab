@@ -192,3 +192,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enemy: {fileID: 4376370483859383390, guid: bbfb2e643eb9859469b79c58765db0df, type: 3}
+  CameController: {fileID: 5334908075582527531, guid: b553509186267ad4982cb30ec6d8b02b, type: 3}

@@ -17,7 +17,6 @@ public class CannonBallController : MonoBehaviour
         if (T5Input.GetWandAvailability()){
             T5Wand = GameObject.Find ("TiltFiveWand");
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
-            Debug.Log("Wand Found");
         }
     }
 

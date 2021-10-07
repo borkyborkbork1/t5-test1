@@ -72,17 +72,18 @@ public class EnemyController : MonoBehaviour
             AudioPosition=collision.transform.position;
         }
 
-        Debug.Log("Enemy has collided with:" + collision.gameObject.name);
+        //Debug.Log("Enemy has collided with:" + collision.gameObject.name);
 
         if (collision.gameObject.name == "Cannon"){
             //if enemy hits cannon 
             GameObject gameController = GameObject.Find("GameController");
             GameController gc = gameController.GetComponent<GameController>();
-            gc.CannonDamage += 1;
+            gc.cannonDamage += 1;
             AudioSource.PlayClipAtPoint(enemyReachesCannon, AudioPosition, 1f);
              
-            GameObject ExplosionInstance=Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
-            Destroy(ExplosionInstance,4);
+            //GameObject ExplosionInstance=Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
+            //Destroy(ExplosionInstance,4);
+
             Destroy(this.gameObject);   
 
         } else {
