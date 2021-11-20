@@ -40,10 +40,16 @@ namespace TiltFive
 		private ScaleSettings scaleSettings;
 		private GameBoardSettings gameBoardSettings;
 		private float contentScaleFactor => scaleSettings.physicalMetersPerWorldSpaceUnit * gameBoardSettings.gameBoardScale;
-		private float totalGameBoardWidthInMeters = 0.8f;
-		private float totalGameBoardLengthInMeters = 0.8f;
-		private float usableGameBoardWidthInMeters = 0.7f;
-		private float usableGameBoardLengthInMeters = 0.7f;
+		private GameBoard.GameboardDimensions gameboardDimensions = new GameBoard.GameboardDimensions
+		{
+			playableSpaceX = new Length(0.7f, LengthUnit.Meters),
+			playableSpaceY = new Length(0.7f, LengthUnit.Meters),
+			borderWidth = new Length(0.05f, LengthUnit.Meters)
+		};
+		private float totalGameBoardWidthInMeters => gameboardDimensions.totalSpaceX.ToMeters;
+		private float totalGameBoardLengthInMeters => gameboardDimensions.totalSpaceY.ToMeters;
+		private float usableGameBoardWidthInMeters => gameboardDimensions.playableSpaceX.ToMeters;
+		private float usableGameBoardLengthInMeters => gameboardDimensions.playableSpaceY.ToMeters;
 
 		private GameObject meshObj;
 		private Mesh meshBorder;
@@ -77,16 +83,14 @@ namespace TiltFive
         }
 
 
-		private void Configure(ScaleSettings scaleSettings, GameBoardSettings gameBoardSettings, float alpha, float gridOffsetY, float gameBoardWidthInMeters, float gameBoardLengthInMeters, float usableGameBoardWidthInMeters, float usableGameBoardLengthInMeters)
+		private void Configure(ScaleSettings scaleSettings, GameBoardSettings gameBoardSettings,
+			float alpha, float gridOffsetY, GameBoard.GameboardDimensions gameboardDimensions)
 		{
 			this.scaleSettings = scaleSettings;
 			this.gameBoardSettings = gameBoardSettings;
 			this.gizmoAlpha = alpha;
 			this.yGridOffset = gridOffsetY;
-			this.totalGameBoardWidthInMeters = gameBoardWidthInMeters;
-			this.totalGameBoardLengthInMeters = gameBoardLengthInMeters;
-			this.usableGameBoardWidthInMeters = usableGameBoardWidthInMeters;
-			this.usableGameBoardLengthInMeters = usableGameBoardLengthInMeters;
+			this.gameboardDimensions = gameboardDimensions;
 
 			if(null == meshObj)
 			{
@@ -166,13 +170,13 @@ namespace TiltFive
 				rulerData = new List<LineSegment>();
 
 				float oneMillimeterLengthInMeters = new Length(1, LengthUnit.Millimeters).ToMeters;
-            
+
 				// For the centimeter ruler, we're going to draw regular marks for centimeters, and smaller ones for millimeters.
 				for(int i = 0; i * oneMillimeterLengthInMeters < usableGameBoardWidthInMeters; i++)
 				{
 					float currentDistance = i * (oneMillimeterLengthInMeters / usableGameBoardWidthInMeters);
 					float smallestFractionOfBoardWidth = 1f / 150f;
-					
+
 					float tickMarkLength = smallestFractionOfBoardWidth;
 					int lod = 3;
 
@@ -185,33 +189,36 @@ namespace TiltFive
 				}
 
 				float oneSixteenthInchLengthInMeters = new Length(1/16f, LengthUnit.Inches).ToMeters;
-				
+
 				// For the inch ruler, we're going to draw regular marks for inches, and smaller ones for half/quarter/eighth/sixteenth inches.
 				for(int i = 0; i * oneSixteenthInchLengthInMeters < usableGameBoardWidthInMeters; i++)
 				{
 					float currentDistance = i * (oneSixteenthInchLengthInMeters / usableGameBoardWidthInMeters);
 					float smallestFractionOfBoardWidth = 1f / 300f;
-					
+
 					float tickMarkLength = smallestFractionOfBoardWidth;
 					int lod = 5;
-					
+
 					lod -= i % 2 == 0 ? 1 : 0;
-					lod -= i % 4 == 0 ? 1 : 0;					
+					lod -= i % 4 == 0 ? 1 : 0;
 					lod -= i % 8 == 0 ? 1 : 0;
 					lod -= i % 16 == 0 ? 1 : 0;
 
 					tickMarkLength += (5 - lod) * smallestFractionOfBoardWidth;
 
 					float offsetFromCentimeterRuler = 1 / 16f;
-					rulerData.Add(new LineSegment(new Vector3(currentDistance, 0f, offsetFromCentimeterRuler - tickMarkLength), new Vector3(currentDistance, 0f, offsetFromCentimeterRuler), lod));
+					rulerData.Add(new LineSegment(
+						new Vector3(currentDistance, 0f, offsetFromCentimeterRuler - tickMarkLength),
+						new Vector3(currentDistance, 0f, offsetFromCentimeterRuler),
+						lod));
 				}
 			}
 
 			if(null == meshRuler)
 			{
 				meshRuler = new Mesh();
-                meshRuler.name = "meshRuler";                
-                
+                meshRuler.name = "meshRuler";
+
 				int vertArraySizeRatio = 4;		// There are 4 vertices for every line in rulerData.
                 Vector3[] verts = new Vector3[rulerData.Count * vertArraySizeRatio];
 
@@ -219,10 +226,10 @@ namespace TiltFive
                 int[] triangles = new int[rulerData.Count * triArraySizeRatio];
 
                 float lineThickness = 1 / 2800f;
-                
+
                 // We want to offset the x vector component to achieve line thickness.
-                var lineThicknessOffset = Vector3.right * (lineThickness / 2f); 
-                
+                var lineThicknessOffset = Vector3.right * (lineThickness / 2f);
+
                 for(int i = 0; i < rulerData.Count; i++)
                 {
                     var line = rulerData[i];
@@ -309,10 +316,10 @@ namespace TiltFive
         }
 
 
-		public void Draw(ScaleSettings scaleSettings, GameBoardSettings gameBoardSettings, float alpha, bool showGrid, float gameBoardWidthInMeters = 0.8f, float gameboardLengthInMeters = 0.8f,
-			float usableGameBoardWidthInMeters = 0.7f, float usableGameboardLengthInMeters = 0.7f, float gridOffsetY = 0f)
+		public void Draw(ScaleSettings scaleSettings, GameBoardSettings gameBoardSettings, float alpha,
+			bool showGrid, GameBoard.GameboardDimensions gameboardDimensions, float gridOffsetY = 0f)
 		{
-			Configure (scaleSettings, gameBoardSettings, alpha, gridOffsetY, gameBoardWidthInMeters, gameboardLengthInMeters, usableGameBoardWidthInMeters, usableGameboardLengthInMeters);
+			Configure (scaleSettings, gameBoardSettings, alpha, gridOffsetY, gameboardDimensions);
 
 			if (null == gameBoardSettings) { return; }
 
@@ -345,7 +352,7 @@ namespace TiltFive
 			}
 
 			if(meshLogoBorder != null && meshLogoLeftCharacter != null && meshLogoRightCharacter != null)
-			{				
+			{
 				DrawLogo();
 			}
 
@@ -363,7 +370,7 @@ namespace TiltFive
 		{
 			var logoDiameter = 2.5f;			// The logo mesh is about 12cm when imported. 2.5cm is better.
 			var logoRadius = logoDiameter / 2;	// 1.25cm diameter logo
-			var borderThickness = 5f;			// 5cm borders
+			var borderThickness = gameboardDimensions.borderWidth.ToCentimeters;
 			var gameBoardFrontExtent = -gameBoardSettings.currentGameBoard.transform.forward / 2;
 			var gameBoardRightExtent = gameBoardSettings.currentGameBoard.transform.right / 2;
 
@@ -371,15 +378,15 @@ namespace TiltFive
 			var logoPosition = (gameBoardRightExtent + gameBoardFrontExtent)  * usableGameBoardWidthInMeters;
 			// ...move the logo left 5cm and center it on the game board border.
 			var oneCentimeterLengthInMeters = new Length(1, LengthUnit.Centimeters).ToMeters;
-			logoPosition += Vector3.left * 5 * oneCentimeterLengthInMeters;
-			logoPosition += Vector3.back * ((borderThickness / 2) - logoRadius) * oneCentimeterLengthInMeters;
+			logoPosition -= gameBoardSettings.currentGameBoard.transform.right * 5 * oneCentimeterLengthInMeters;
+			logoPosition -= gameBoardSettings.currentGameBoard.transform.forward * ((borderThickness / 2) - logoRadius) * oneCentimeterLengthInMeters;
 
 			var contentScaleFactor = scaleSettings.physicalMetersPerWorldSpaceUnit * gameBoardSettings.gameBoardScale;
 			Matrix4x4 mtxOrigin = Matrix4x4.TRS( Vector3.zero, Quaternion.identity, Vector3.one );
 			var mtxWorld = Matrix4x4.TRS( gameBoardSettings.gameBoardCenter + logoPosition / contentScaleFactor,
-				Quaternion.Euler(gameBoardSettings.gameBoardRotation + Vector3.up * 180),
+				gameBoardSettings.currentGameBoard.rotation,
 				logoDiameter * Vector3.one / contentScaleFactor );
-			Matrix4x4 mtxPreTransform = Matrix4x4.TRS( Vector3.zero, Quaternion.Euler(-90.0f, 0.0f, 0.0f), Vector3.one );
+			Matrix4x4 mtxPreTransform = Matrix4x4.TRS( Vector3.zero, Quaternion.Euler(-90.0f, 180.0f, 0.0f), Vector3.one );
 			Gizmos.matrix = mtxOrigin * mtxWorld * mtxPreTransform;
 
 			Gizmos.color = new Color (0.969f, 0.969f, 0.969f, gizmoAlpha);	// T5 Light Gray Background
@@ -399,8 +406,12 @@ namespace TiltFive
 
 			// Define the transformations for the grid origin and orientation.
 			Matrix4x4 mtxOrigin = Matrix4x4.TRS( Vector3.zero, Quaternion.identity, Vector3.one );
-			Matrix4x4 mtxPreTransform = Matrix4x4.TRS( Vector3.zero, Quaternion.Euler(0.0f, 0.0f, 0.0f), new Vector3(usableGameBoardWidthInMeters, 1f, usableGameBoardLengthInMeters));
-            Matrix4x4 mtxWorld = Matrix4x4.TRS( gameBoardSettings.gameBoardCenter + (gameBoardSettings.currentGameBoard.transform.up * offsetLengthInMeters / contentScaleFactor),
+			Matrix4x4 mtxPreTransform = Matrix4x4.TRS(
+				Vector3.zero,
+				Quaternion.Euler(0.0f, 0.0f, 0.0f),
+				new Vector3(usableGameBoardWidthInMeters, 1f, usableGameBoardLengthInMeters));
+            Matrix4x4 mtxWorld = Matrix4x4.TRS(
+				gameBoardSettings.gameBoardCenter + (gameBoardSettings.currentGameBoard.transform.up * offsetLengthInMeters / contentScaleFactor),
 				gameBoardSettings.currentGameBoard.transform.rotation,
 				Vector3.one / contentScaleFactor );
 			Matrix4x4 mtxGizmo = mtxOrigin * mtxWorld * mtxPreTransform;
@@ -432,21 +443,22 @@ namespace TiltFive
 			var endSecondFade = secondScreenSpaceDistance < endFadeThreshold;
 
 			var fadeFactor = 1f - Mathf.Clamp((beginFadeThreshold - screenSpaceDistance) / endFadeThreshold, 0f, 1f);
-			var secondFadeFactor = 1f - Mathf.Clamp((beginFadeThreshold - secondScreenSpaceDistance) / endFadeThreshold, 0f, 1f);			
+			var secondFadeFactor = 1f - Mathf.Clamp((beginFadeThreshold - secondScreenSpaceDistance) / endFadeThreshold, 0f, 1f);
 
 			var fadeAlpha = gizmoAlpha * fadeFactor;
-			var secondFadeAlpha = gizmoAlpha * secondFadeFactor;			
+			var secondFadeAlpha = gizmoAlpha * secondFadeFactor;
 
 			// Finally, draw some grid lines.
 			var oldColor = Gizmos.color;
 
 			DrawGridLines(xGridLines, gridLinePeriod, beginFade, endFade, fadeAlpha, beginSecondFade, endSecondFade, secondFadeAlpha);
 			DrawGridLines(zGridLines, gridLinePeriod, beginFade, endFade, fadeAlpha, beginSecondFade, endSecondFade, secondFadeAlpha);
-			
+
 			Gizmos.color = oldColor;
         }
 
-		private void DrawGridLines(List<LineSegment> lines, int gridLinePeriod, bool beginFade, bool endFade, float fadeAlpha, bool beginSecondFade, bool endSecondFade, float secondFadeAlpha)
+		private void DrawGridLines(List<LineSegment> lines, int gridLinePeriod, bool beginFade, bool endFade,
+			float fadeAlpha, bool beginSecondFade, bool endSecondFade, float secondFadeAlpha)
 		{
 			var gridLinePeriodSquared = gridLinePeriod * gridLinePeriod;
 			var mtxGizmo = Gizmos.matrix;
@@ -475,10 +487,10 @@ namespace TiltFive
 				// We'll need the current line defined in world space to check for cursor collision.
                 var currentGridLineSegment = lines[i];
                 var transformedLineSegment = new LineSegment(
-					mtxGizmo.MultiplyPoint(currentGridLineSegment.Start), 
+					mtxGizmo.MultiplyPoint(currentGridLineSegment.Start),
 					mtxGizmo.MultiplyPoint(currentGridLineSegment.End), currentGridLineSegment.LOD);
 
-				var lineCollidesWithCursor = TryGetCursorPosition(out var cursorPosition) 
+				var lineCollidesWithCursor = TryGetCursorPosition(out var cursorPosition)
 					&& CheckRaySphereCollision(cursorPosition, cursorSphereRadius, transformedLineSegment);
 
 				// Apply any fading required by the camera's distance from the grid.
@@ -492,9 +504,9 @@ namespace TiltFive
 					lineAlpha = fadeAlpha;
 				}
 
-				Gizmos.color = lineCollidesWithCursor 
-					? new Color(1f, 0f, 0f, gizmoAlpha) 
-					: new Color(1f, 1f, 1f, lineAlpha);				
+				Gizmos.color = lineCollidesWithCursor
+					? new Color(1f, 0f, 0f, gizmoAlpha)
+					: new Color(1f, 1f, 1f, lineAlpha);
 
 				// If the line collides with the cursor, project it on the edges of the board.
 				if(lineCollidesWithCursor)
@@ -509,7 +521,9 @@ namespace TiltFive
 
 					var mtxPreTransform = Matrix4x4.TRS(Vector3.zero, Quaternion.identity,
 						(xAxisAligned ? new Vector3(xLineExtensionFactor, 1f, 1f) : new Vector3(1f, 1f, zLineExtensionFactor)));
-					var newMtxWorld = Matrix4x4.TRS(gameBoardSettings.currentGameBoard.transform.position, gameBoardSettings.currentGameBoard.transform.rotation,
+					var newMtxWorld = Matrix4x4.TRS(
+						gameBoardSettings.currentGameBoard.transform.position,
+						gameBoardSettings.currentGameBoard.transform.rotation,
 						new Vector3(usableGameBoardWidthInMeters / contentScaleFactor, 0f, usableGameBoardLengthInMeters / contentScaleFactor));
 					Gizmos.matrix = newMtxWorld;
 
@@ -551,7 +565,9 @@ namespace TiltFive
 		{
 			// Set up the collision plane
             var planeOffsetY = (yGridOffset * scaleSettings.oneUnitLengthInMeters) / (scaleSettings.physicalMetersPerWorldSpaceUnit * gameBoardSettings.gameBoardScale);
-            var gridPlane = new Plane(gameBoardSettings.currentGameBoard.transform.up, gameBoardSettings.currentGameBoard.transform.localToWorldMatrix.MultiplyPoint(planeOffsetY * Vector3.up));
+            var gridPlane = new Plane(
+				gameBoardSettings.currentGameBoard.transform.up,
+				gameBoardSettings.currentGameBoard.transform.localToWorldMatrix.MultiplyPoint(planeOffsetY * Vector3.up));
 
             if(gridPlane.Raycast(ray, out var intersectionDistance))
             {
@@ -592,7 +608,8 @@ namespace TiltFive
 
 			Matrix4x4 mtxOrigin = Matrix4x4.TRS( Vector3.zero, Quaternion.identity, Vector3.one );
 			Matrix4x4 mtxPreTransform = Matrix4x4.TRS( Vector3.zero, Quaternion.Euler(0.0f, 0.0f, 0.0f), new Vector3(usableGameBoardWidthInMeters, 1f, usableGameBoardLengthInMeters));
-			Matrix4x4 mtxWorld = Matrix4x4.TRS(gameBoardSettings.gameBoardCenter + (0.5f * (usableGameBoardWidthInMeters + 0.05f) * gameBoardSettings.currentGameBoard.transform.forward) / contentScaleFactor,
+			Matrix4x4 mtxWorld = Matrix4x4.TRS(
+				gameBoardSettings.gameBoardCenter + (0.5f * (usableGameBoardWidthInMeters + 0.05f) * gameBoardSettings.currentGameBoard.transform.forward) / contentScaleFactor,
 				Quaternion.Euler(gameBoardSettings.gameBoardRotation),
 				Vector3.one / contentScaleFactor );
 			Gizmos.matrix = mtxOrigin * mtxWorld * mtxPreTransform;

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 using TiltFive.Logging;
@@ -77,8 +78,8 @@ namespace TiltFive
         float[] _wandRotation = new float[4];
 
         // Stereo camera poses.
-        [NonSerialized] float[] _rotToULVC_UGBL = new float[4];
-        [NonSerialized] float[] _rotToURVC_UGBL = new float[4];
+        [NonSerialized] float[] _rotToUGBL_ULVC = new float[4];
+        [NonSerialized] float[] _rotToUGBL_URVC = new float[4];
         [NonSerialized] float[] _posULVC_UGBL = new float[3];
         [NonSerialized] float[] _posURVC_UGBL = new float[3];
 
@@ -91,7 +92,14 @@ namespace TiltFive
 
         void Awake()
         {
-            _sendFrameCallback = NativePlugin.GetSendFrameCallback();
+            try
+            {
+                _sendFrameCallback = NativePlugin.GetSendFrameCallback();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
 
             LogVersion();
 
@@ -145,6 +153,71 @@ namespace TiltFive
             Debug.unityLogger.logEnabled = logEnabled;
         }
 
+        public static bool SetApplicationInfo()
+        {
+            return Instance.SetApplicationInfoImpl();
+        }
+
+        private bool SetApplicationInfoImpl()
+        {
+            string applicationName = Application.productName;
+#if UNITY_EDITOR
+            // TODO: Localize
+            applicationName = $"Unity Editor: {applicationName}";
+#endif
+            string applicationId = Application.identifier;
+            string productVersion = Application.version;
+            string engineVersion = Application.unityVersion;
+            TextAsset pluginVersionAsset = (TextAsset)Resources.Load("pluginversion");
+            string applicationVersionInfo = $"App: {productVersion}, Engine: {engineVersion}, T5 SDK: {pluginVersionAsset.text}";
+
+            // We're going to need to pass along some pointers to unmanaged memory.
+            IntPtr pAppNameBytes = IntPtr.Zero;
+            IntPtr pAppIdBytes = IntPtr.Zero;
+            IntPtr pAppVersionBytes = IntPtr.Zero;
+
+            int result = 1;
+
+            try
+            {
+                // Encode the strings as UTF-8 data, copy that data to unmanaged memory,
+                // and hold onto the pointers to that memory.
+                pAppNameBytes = StringToUnmanagedUTF8ByteArray(applicationName);
+                pAppIdBytes = StringToUnmanagedUTF8ByteArray(applicationId);
+                pAppVersionBytes = StringToUnmanagedUTF8ByteArray(applicationVersionInfo);
+
+                result = NativePlugin.SetApplicationInfo(pAppNameBytes, pAppIdBytes, pAppVersionBytes);
+            }
+            catch (Exception)
+            {
+                Log.Error("Failed to register project info with the Tilt Five service.");
+            }
+            finally
+            {
+                // Don't forget to free that unmanaged memory we allocated.
+                // Marshal.FreeHGlobal() will safely do nothing if IntPtr.Zero is passed in.
+                Marshal.FreeHGlobal(pAppNameBytes);
+                Marshal.FreeHGlobal(pAppIdBytes);
+                Marshal.FreeHGlobal(pAppVersionBytes);
+            }
+
+            return result == 0;
+        }
+
+        private IntPtr StringToUnmanagedUTF8ByteArray(string text)
+        {
+            byte[] textBytesUTF8 = System.Text.Encoding.UTF8.GetBytes(text);
+            const byte NULL_TERMINATION = 0;
+
+            // Allocate enough unmanaged memory to store the string, plus one for null termination.
+            IntPtr pTextBytesUTF8 = Marshal.AllocHGlobal(textBytesUTF8.Length + 1);
+            // Store the string data and null termination.
+            Marshal.Copy(textBytesUTF8, 0, pTextBytesUTF8, textBytesUTF8.Length);
+            Marshal.WriteByte(pTextBytesUTF8, textBytesUTF8.Length, NULL_TERMINATION);
+
+            return pTextBytesUTF8;
+        }
+
         public static bool GetGlassesAvailability()
         {
             return Instance.GetGlassesAvailabilityImpl();
@@ -152,7 +225,15 @@ namespace TiltFive
 
         bool GetGlassesAvailabilityImpl()
         {
-            return NativePlugin.RefreshGlassesAvailable() == 0;
+            try
+            {
+                return NativePlugin.RefreshGlassesAvailable() == 0;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                return false;
+            }
         }
 
         static public bool PresentStereoImages(
@@ -198,25 +279,25 @@ namespace TiltFive
             float width_VCI  = -2.0f * startX_VCI;
             float height_VCI = -2.0f * startY_VCI;
 
-            _rotToULVC_UGBL[0] = -rotToUGBL_ULVC.x;
-            _rotToULVC_UGBL[1] = -rotToUGBL_ULVC.y;
-            _rotToULVC_UGBL[2] = -rotToUGBL_ULVC.z;
-            _rotToULVC_UGBL[3] = rotToUGBL_ULVC.w;
+            _rotToUGBL_ULVC[0] = rotToUGBL_ULVC.x;
+            _rotToUGBL_ULVC[1] = rotToUGBL_ULVC.y;
+            _rotToUGBL_ULVC[2] = rotToUGBL_ULVC.z;
+            _rotToUGBL_ULVC[3] = rotToUGBL_ULVC.w;
 
             _posULVC_UGBL[0] = posULVC_UGBL.x;
             _posULVC_UGBL[1] = posULVC_UGBL.y;
             _posULVC_UGBL[2] = posULVC_UGBL.z;
 
-            _rotToURVC_UGBL[0] = -rotToUGBL_URVC.x;
-            _rotToURVC_UGBL[1] = -rotToUGBL_URVC.y;
-            _rotToURVC_UGBL[2] = -rotToUGBL_URVC.z;
-            _rotToURVC_UGBL[3] = rotToUGBL_URVC.w;
+            _rotToUGBL_URVC[0] = rotToUGBL_URVC.x;
+            _rotToUGBL_URVC[1] = rotToUGBL_URVC.y;
+            _rotToUGBL_URVC[2] = rotToUGBL_URVC.z;
+            _rotToUGBL_URVC[3] = rotToUGBL_URVC.w;
 
             _posURVC_UGBL[0] = posURVC_UGBL.x;
             _posURVC_UGBL[1] = posURVC_UGBL.y;
             _posURVC_UGBL[2] = posURVC_UGBL.z;
 
-            int result = 0;
+            int result = 1;
             try
             {
                 result = NativePlugin.QueueStereoImages(leftTexHandle,
@@ -228,9 +309,9 @@ namespace TiltFive
                                                         startY_VCI,
                                                         width_VCI,
                                                         height_VCI,
-                                                        _rotToULVC_UGBL,
+                                                        _rotToUGBL_ULVC,
                                                         _posULVC_UGBL,
-                                                        _rotToURVC_UGBL,
+                                                        _rotToUGBL_URVC,
                                                         _posURVC_UGBL);
             }
             catch (Exception e)
@@ -240,6 +321,27 @@ namespace TiltFive
 
             if (result != 0) {
                 return false;
+            }
+
+            if(_sendFrameCallback == IntPtr.Zero)
+            {
+                // We failed to set _sendFrameCallback during Awake() - let's try again
+                try
+                {
+                    _sendFrameCallback = NativePlugin.GetSendFrameCallback();
+                }
+                catch (Exception)
+                {
+                    Log.Error("Unable to send frame - the native plugin DLL may be failing to load");
+                    return false;
+                }
+
+                if (_sendFrameCallback == IntPtr.Zero)
+                {
+                    // If we reach this point, the native plugin loaded, but erroneously gave us a null callback
+                    Log.Error("Unable to send frame - the native plugin returned a null SendFrame callback");
+                    return false;
+                }
             }
 
             GL.IssuePluginEvent(_sendFrameCallback, 0);
@@ -263,7 +365,32 @@ namespace TiltFive
                 {
                     displayDimensions = new Vector2Int(_displaySettings[0], _displaySettings[1]);
                 }
-                else Log.Warn("Plugin.cs: Failed to retrieve display settings from plugin.");
+                else Log.Warn("Display.cs: Failed to retrieve display settings from plugin.");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
+
+            return (0 == result);
+        }
+
+        public static bool GetGlassesIPD(ref float glassesIPD)
+        {
+            return Instance.GetGlassesIPDImpl(ref glassesIPD);
+        }
+
+        private bool GetGlassesIPDImpl(ref float glassesIPD)
+        {
+            int result = 1;
+            try
+            {
+                result = NativePlugin.GetGlassesIPD(ref glassesIPD);
+
+                if(result != 0 && GetGlassesAvailability())
+                {
+                    Log.Warn("Display.cs: Failed to retrieve glasses IPD");
+                }
             }
             catch (Exception e)
             {

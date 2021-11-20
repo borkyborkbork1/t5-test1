@@ -26,6 +26,7 @@ namespace TiltFive
             DrawHeadPoseCameraField(glassesSettingsProperty);
             DrawGlassesFOVField(glassesSettingsProperty);
             DrawGlassesMirrorModeField(glassesSettingsProperty);
+            DrawPreviewPoseField(glassesSettingsProperty);
             DrawGlassesAvailabilityLabel();
         }
 
@@ -77,6 +78,38 @@ namespace TiltFive
             var mirrorModeProperty = glassesSettingsProperty.FindPropertyRelative("glassesMirrorMode");
 
             mirrorModeProperty.enumValueIndex = EditorGUILayout.Popup("Mirror Mode", mirrorModeProperty.enumValueIndex, mirrorModeProperty.enumDisplayNames);
+
+            --EditorGUI.indentLevel;
+        }
+
+        private static void DrawPreviewPoseField(SerializedProperty glassesSettingsProperty)
+        {
+            ++EditorGUI.indentLevel;
+
+            var usePreviewPoseProperty = glassesSettingsProperty.FindPropertyRelative("usePreviewPose");
+            var previewPoseProperty = glassesSettingsProperty.FindPropertyRelative("previewPose");
+
+            usePreviewPoseProperty.boolValue = EditorGUILayout.Toggle(
+                new GUIContent("Use Preview Pose",
+                    "If enabled, the head pose camera pose will be set to match " +
+                    "that of the Preview Pose GameObject if the glasses are no longer looking at the gameboard." +
+                    System.Environment.NewLine +
+                    "If disabled, it is up to the developer to set the head pose position until head tracking resumes." +
+                    "It is also up to the developer to stop driving the head pose position once head tracking resumes."),
+                usePreviewPoseProperty.boolValue);
+
+            if (usePreviewPoseProperty.boolValue)
+            {
+                if(!previewPoseProperty.objectReferenceValue)
+                {
+                    EditorGUILayout.HelpBox("No Transform assigned to Preview Pose." +
+                    System.Environment.NewLine + System.Environment.NewLine +
+                    "If the \"Use Preview Pose\" flag is enabled, but no Transform is assigned, " +
+                    "the head pose camera will not be updated at all if the glasses lose tracking.", MessageType.Warning);
+                }
+                EditorGUILayout.PropertyField(previewPoseProperty, new GUIContent("Preview Pose",
+                    "A reference pose for the head pose camera to use while the user is looking away from the gameboard."));
+            }
 
             --EditorGUI.indentLevel;
         }

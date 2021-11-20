@@ -286,6 +286,24 @@ namespace TiltFive
             }
         }
 
+        /// <summary>
+        /// Multiplies a Length by some scalar value.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
+        public static Length operator *(Length a, float scalar)
+            => new Length(a.ToMeters * scalar, LengthUnit.Meters);
+
+        /// <summary>
+        /// Adds two Length values together.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Length operator +(Length a, Length b)
+            => new Length(a.ToMeters + b.ToMeters, LengthUnit.Meters);
+
         #endregion Public Functions
     }
 }

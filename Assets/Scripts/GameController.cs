@@ -10,7 +10,6 @@ public class GameController : MonoBehaviour
     public int enemyDropSpacingMin = 5;
     public int enemyDropSpacingMax = 10;
     public string planeDirection = "vertical";
-    public GameObject StartScreenCanvas;
 
 
     private bool spawnComplete = true;
@@ -20,10 +19,12 @@ public class GameController : MonoBehaviour
     private GameObject T5Wand;
     private GameObject T5Glasses;
 
+
     // Start is called before the first frame update
     void Start()
     {
         //Time.timeScale = 0;
+
         Debug.Log("wand available:"+T5Input.GetWandAvailability());
 
 

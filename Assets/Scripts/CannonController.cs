@@ -96,7 +96,6 @@ public class CannonController : MonoBehaviour
 
             }
         }
-        
         //Shoot cannonball and wait a bit
         IEnumerator FireCannon() {
             canshoot = false;
@@ -106,7 +105,7 @@ public class CannonController : MonoBehaviour
             
             AudioSource.PlayClipAtPoint(cannonFire, AudioPosition, 1f);
 
-            yield return new WaitForSeconds (.5f);
+            yield return new WaitForSeconds (.25f);
             canshoot = true;
     
         }

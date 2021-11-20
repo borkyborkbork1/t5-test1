@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using TiltFive.Logging;
 
 namespace TiltFive
 {
@@ -82,36 +82,91 @@ namespace TiltFive
         /// </summary>
         private Vector3 currentScale;
 
-
-        // TODO: Implement separate configurations for LE and XE kits.
-
-        /// <summary>
-        /// <b>EDITOR-ONLY</b> The width of the usable area of the game board.
-        /// </summary>
-        private const float usableGameBoardWidthInMeters = 0.7f;
-        /// <summary>
-        /// <b>EDITOR-ONLY</b> The length of the usable area of the game board.
-        /// </summary>
-        private const float usableGameBoardLengthInMeters = 0.7f;
-        /// <summary>
-        /// <b>EDITOR-ONLY</b> The total width of the game board.
-        /// </summary>
-        private const float totalGameBoardWidthInMeters = 0.8f;
-        /// <summary>
-        /// <b>EDITOR-ONLY</b> The total length of the game board.
-        /// </summary>
-        private const float totalGameBoardLengthInMeters = 0.8f;
-
         private const float MIN_SCALE = 0.00001f;
-
-
 
 #endif // UNITY_EDITOR
 
         #endregion Private Fields
 
 
+        #region Public Structs
+
+        public struct GameboardDimensions
+        {
+            public Length playableSpaceX;
+            public Length playableSpaceY;
+            public Length borderWidth;
+            public Length totalSpaceX => playableSpaceX + (borderWidth * 2);
+            public Length totalSpaceY => playableSpaceY + (borderWidth * 2);
+        }
+
+        #endregion Private Structs
+
+
         #region Public Functions
+
+        /// <summary>
+        /// Attempts to check the latest glasses pose for the current gameboard type, such as LE, XE, or none.
+        /// </summary>
+        /// <param name="gameboardType"></param>
+        /// <returns>Returns <see cref="GameboardType.GameboardType_None"/> if something goes wrong.
+        /// This can happen if the user looks away and the head tracking camera loses sight of the gameboard.</returns>
+        public static bool TryGetGameboardType(out GameboardType gameboardType)
+        {
+            GameboardType newGameboardType = GameboardType.GameboardType_None;
+            int result = 1;
+
+            try
+            {
+                result = NativePlugin.GetGameboardType(ref newGameboardType);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
+
+            gameboardType = newGameboardType;
+
+            return result == 0;
+        }
+
+        /// <summary>
+        /// Attempts to obtain the physical dimensions for a particular gameboard type.
+        /// </summary>
+        /// <param name="gameboardType"></param>
+        /// <param name="gameboardDimensions"></param>
+        /// <returns>Returns dimensions for <see cref="GameboardType.GameboardType_LE"/> if it fails.</returns>
+        public static bool TryGetGameboardDimensions(GameboardType gameboardType, out GameboardDimensions gameboardDimensions)
+        {
+            if(gameboardType == GameboardType.GameboardType_None)
+            {
+                gameboardDimensions = new GameboardDimensions();
+                return false;
+            }
+
+            // Default to the LE gameboard dimensions in meters.
+            float[] playableSpaceInMeters = { 0.7f, 0.7f };
+            float borderWidthInMeters = 0.05f;
+            int result = 1;
+
+            try
+            {
+                result = NativePlugin.GetGameboardDimensions(gameboardType, ref playableSpaceInMeters, ref borderWidthInMeters);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+            }
+
+            gameboardDimensions = new GameboardDimensions()
+            {
+                playableSpaceX = new Length(playableSpaceInMeters[0], LengthUnit.Meters),
+                playableSpaceY = new Length(playableSpaceInMeters[1], LengthUnit.Meters),
+                borderWidth = new Length(borderWidthInMeters, LengthUnit.Meters)
+            };
+
+            return result == 0;
+        }
 
 #if UNITY_EDITOR
 
@@ -130,9 +185,11 @@ namespace TiltFive
 
             if (ShowGizmo)
             {
+                // TODO: Add support for drawing a XE gameboard gizmo.
+                TryGetGameboardDimensions(GameboardType.GameboardType_LE, out var gameboardDimensions);
+
                 boardGizmo.Draw(scaleSettings, gameBoardSettings, GizmoOpacity, ShowGrid,
-                totalGameBoardWidthInMeters, totalGameBoardLengthInMeters,
-                usableGameBoardWidthInMeters, usableGameBoardLengthInMeters, gridOffsetY);
+                gameboardDimensions, gridOffsetY);
             }
 
             var sceneViewRepaintNecessary = ScaleCompensate(scaleSettings);
@@ -145,11 +202,10 @@ namespace TiltFive
             }
         }
 
-
-
 #endif  // UNITY_EDITOR
 
         #endregion Public Functions 
+
 
         #region Private Functions
 

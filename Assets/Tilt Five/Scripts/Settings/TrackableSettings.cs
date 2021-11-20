@@ -20,9 +20,11 @@ namespace TiltFive
     [System.Serializable]
     public abstract class TrackableSettings
     {
-        /// <summary>
-        /// The GameObject in the scene that will have its pose driven by the Tilt Five tracking.
-        /// </summary>
-        public GameObject drivenObject;
+        /*
+         * We may add common functionality for settings classes here in the future.
+         *
+         * For now, this class just places a constraint on the types of objects
+         * that can be used with TrackableCore<T>.
+        */
     }
 }

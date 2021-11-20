@@ -22,19 +22,42 @@ namespace TiltFive
     {
         public static void Draw(SerializedProperty wandSettingsProperty)
         {
-            var drivenObject = wandSettingsProperty.FindPropertyRelative("drivenObject");
             var controllerIndex = wandSettingsProperty.FindPropertyRelative("controllerIndex");
-            bool wandAvailable = drivenObject.objectReferenceValue;
 
+            var gripPointObject = wandSettingsProperty.FindPropertyRelative("GripPoint");
+            var fingertipsPointObject = wandSettingsProperty.FindPropertyRelative("FingertipPoint");
+            var aimPointObject = wandSettingsProperty.FindPropertyRelative("AimPoint");
+
+            Rect wandPointsRect = EditorGUILayout.BeginVertical();
+            EditorGUILayout.LabelField($"{controllerIndex.enumDisplayNames[controllerIndex.enumValueIndex]} Wand");
+            ++EditorGUI.indentLevel;
+
+            bool wandAvailable = gripPointObject.objectReferenceValue;
             if (!wandAvailable)
             {
                 EditorGUILayout.HelpBox($"Tracking for the {controllerIndex.enumDisplayNames[controllerIndex.enumValueIndex]} Wand requires an active GameObject assignment.", MessageType.Warning);
             }
-            Rect primaryWandRect = EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PropertyField(drivenObject, new GUIContent($"{controllerIndex.enumDisplayNames[controllerIndex.enumValueIndex]} Wand"));
+
+            Rect wandGripRect = EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(gripPointObject, new GUIContent("Grip Point"));
             EditorGUILayout.EndHorizontal();
-            EditorGUI.LabelField(primaryWandRect, new GUIContent("",
-                "The GameObject driven by the wand tracking system."));
+            EditorGUI.LabelField(wandGripRect, new GUIContent("",
+                "The GameObject driven by the wand's grip position, located at the center of the wand handle."));
+
+            Rect wandFingertipsRect = EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(fingertipsPointObject, new GUIContent("Fingertips Point"));
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.LabelField(wandFingertipsRect, new GUIContent("",
+                "The GameObject driven by the wand's fingertips position, located between the trigger and joystick."));
+
+            Rect wandAimRect = EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PropertyField(aimPointObject, new GUIContent("Aim Point"));
+            EditorGUILayout.EndHorizontal();
+            EditorGUI.LabelField(wandAimRect, new GUIContent("",
+                "The GameObject driven by the wand's aim position, located at the tip of the wand."));
+
+            --EditorGUI.indentLevel;
+            EditorGUILayout.EndVertical();    // End wandPointsRect
 
             DrawWandAvailableLabel((ControllerIndex)controllerIndex.enumValueIndex);
         }

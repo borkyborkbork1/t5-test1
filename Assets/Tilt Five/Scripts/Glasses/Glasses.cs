@@ -299,7 +299,6 @@ namespace TiltFive
                 else
                 {
                     // Obtain the latest glasses pose.
-                    glassesSettings.drivenObject = glassesSettings.headPoseCamera.gameObject;
                     base.Update(glassesSettings, scaleSettings, gameBoardSettings);
                 }
 
@@ -329,19 +328,24 @@ namespace TiltFive
                 // Manual split screen 'new glasses' until the day Unity lets
                 // me override their Mock HMD settings.
 
-                Transform headPose = glassesSettings.drivenObject.transform;
+                Transform headPose = glassesSettings.headPoseCamera.transform;
 
                 // compute half ipd translation
-                float ipd_UWRLD = scaleToUWRLD_UGBL * GlassesSettings.IPD_UGBL;
+                float ipd_UGBL = GlassesSettings.DEFAULT_IPD_UGBL;
+                if(!Display.GetGlassesIPD(ref ipd_UGBL) && glassesAvailable)
+                {
+                    Log.Error("Failed to obtain Glasses IPD");
+                }
+                float ipd_UWRLD = scaleToUWRLD_UGBL * ipd_UGBL;
                 Vector3 eyeOffset = (headPose.right.normalized * (ipd_UWRLD * 0.5f));
 
                 // set the left eye camera offset from the head by the half ipd amount (-)
-                eyePositions[AREyes.EYE_LEFT] = position_UnityWorldSpace - eyeOffset;
-                eyeRotations[AREyes.EYE_LEFT] = rotation_UnityWorldSpace;
+                eyePositions[AREyes.EYE_LEFT] = headPose.position - eyeOffset;
+                eyeRotations[AREyes.EYE_LEFT] = headPose.rotation;
 
                 // set the right eye camera offset from the head by the half ipd amount (+)
-                eyePositions[AREyes.EYE_RIGHT] = position_UnityWorldSpace + eyeOffset;
-                eyeRotations[AREyes.EYE_RIGHT] = rotation_UnityWorldSpace;
+                eyePositions[AREyes.EYE_RIGHT] = headPose.position + eyeOffset;
+                eyeRotations[AREyes.EYE_RIGHT] = headPose.rotation;
 
                 Camera leftEyeCamera = splitStereoCamera.leftEyeCamera;
                 if (null != leftEyeCamera)
@@ -382,6 +386,14 @@ namespace TiltFive
 
             protected override bool GetTrackingAvailability(GlassesSettings settings)
             {
+                // TODO: Think about checking for GameboardType.GameboardType_None here.
+                // Currently this would prevent SetDrivenObjectTransform() from being called,
+                // which would prevent the preview pose from being used,
+                // so some untangling would be necessary.
+                // Perhaps this function should be renamed to "GetDeviceAvailability()"?
+                // Maybe a new function in TrackableCore like "HandleTrackingLost()" that would
+                // be called instead of SetDrivenObjectTransform() should be added?
+                // In any case, some untangling should happen.
                 return Display.GetGlassesAvailability();
             }
 
@@ -410,6 +422,30 @@ namespace TiltFive
                 rotation = new Quaternion(rotationResult[0], rotationResult[1], rotationResult[2], rotationResult[3]);
 
                 return result == 0;
+            }
+
+            protected override void SetDrivenObjectTransform(GlassesSettings settings)
+            {
+                // Handle a loss of head tracking if necessary.
+                if(GameBoard.TryGetGameboardType(out var gameboardType)
+                    && gameboardType == GameboardType.GameboardType_None)
+                {
+                    // Use the preview pose instead of the one returned by the service.
+                    if(settings.usePreviewPose)
+                    {
+                        settings.headPoseCamera?.transform.SetPositionAndRotation(
+                            settings.previewPose.position,
+                            settings.previewPose.rotation);
+                        return;
+                    }
+                    // Otherwise do nothing and let the developer control the head pose camera themselves.
+                    // It will be up to them to let go once head tracking kicks in again.
+                    return;
+                }
+
+                settings.headPoseCamera?.transform.SetPositionAndRotation(
+                    position_UnityWorldSpace,
+                    rotation_UnityWorldSpace);
             }
         }
     }

@@ -66,16 +66,6 @@ namespace TiltFive
                 return;
             }
 
-            if(settings.drivenObject == null)
-            {
-                // There isn't a GameObject to drive.
-                // It is up to subclasses that implement TrackableCore to determine whether
-                // this situation is valid before calling Update — we won't log a warning/error here.
-                // For example, if a developer only supports gamepad controls, wand tracking is unnecessary
-                // and we can safely skip calculating the pose.
-                return;
-            }
-
             // Get the game board pose.
             gameBoardPosition_UnityWorldSpace = gameBoardSettings.gameBoardCenter;
             gameBoardRotation_UnityWorldSpace = Quaternion.Inverse(gameBoardSettings.currentGameBoard.rotation);
@@ -92,9 +82,7 @@ namespace TiltFive
             position_UnityWorldSpace = GameBoardToWorldSpace(position_GameBoardSpace, scaleSettings, gameBoardSettings);
             rotation_UnityWorldSpace = GameBoardToWorldSpace(rotation_GameBoardSpace, gameBoardSettings);
 
-            Transform wandTransform = settings.drivenObject.transform;
-            wandTransform.position = position_UnityWorldSpace;
-            wandTransform.rotation = rotation_UnityWorldSpace;
+            SetDrivenObjectTransform(settings);
         }
 
         protected static Vector3 GameBoardToWorldSpace(Vector3 position,
@@ -147,5 +135,11 @@ namespace TiltFive
         /// <param name="settings"></param>
         /// <returns></returns>
         protected abstract bool TryGetPoseFromPlugin(out Vector3 position, out Quaternion rotation, T settings);
+
+        /// <summary>
+        /// Sets the pose of the object(s) being driven by TrackableCore.
+        /// </summary>
+        /// <param name="settings"></param>
+        protected abstract void SetDrivenObjectTransform(T settings);
     }
 }

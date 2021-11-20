@@ -1,3 +1,53 @@
+## [0.15.0] - Excellent Elemental
+* Added
+	* Firmware: Added initial microphone support
+	* Firmware: Added low-power "sleep" mode and thermal-backoff throttling
+	* Firmware: Added projector temperature monitoring
+	* Firmware: Added the ability to hard-reset the SoC via GPIO
+	* Firmware: Enabled additional code quality tools (Inc global [[nodiscard]])
+	* Host: Added internal support for multiple devices
+	* Host: Added platform specific settings storage
+	* Host: Major restructure of host side software
+	* Misc: Added additional display modes to internal test tools
+	* Misc: Added enhanced versioning utilities
+	* SDK: Gameboard type added to pose information
+* Changes
+	* Control Panel: Added placeholder device while device reboots
+	* Firmware: Adjusted default USB speaker volume
+	* Firmware: Audio Code cleanup
+	* Firmware: Error checking code cleanup
+	* Firmware: Improved warper pixel sampling location
+	* Firmware: Misc improvements to USB handling
+	* Firmware: Reduce SPI traffic for radio
+	* Firmware: Restructured USB interfaces
+	* Host: Improved uninstaller
+	* Host: Moved wand tracking out of SDK into service
+	* Host: Optimized client side IMU data structures
+	* Host: Switched from UMDF to WinUSB based driver
+	* Host: Switched to abstract firmware providers (OS independent)
+	* Host: Switched to UNICODE builds by default
+	* Host: Updated Flutter to 2.5.3
+	* Host: Windows installer checks to ensure Windows 10, version 1703+ is in use
+	* Misc: Added multiple string handling utilities
+	* Misc: Formatting improvements throughout codebase
+	* Misc: Reimplement internal test tools using NDK (Liveview, Squares, Wandviz)
+	* Misc: Updated internal build tools
+	* Misc: Utility code cleanup
+	* Unity Plugin: Code cleanup
+	* Unity Plugin: Integrated "TrackingUpdated" flag into TrackableCore
+* Fixes
+	* Control Panel: Multiple small fixes
+	* Factory Software: Multiple small fixes
+	* Firmware: Added workarounds for I2S driver bugs
+	* Firmware: Fixed a source of audio crackle (DAC clock settings)
+	* Firmware: Multiple small fixes
+	* Unity Plugin: Added a warning for bad head pose camera scale
+	* Unity Plugin: Added pupillary distance query to Unity SDK
+	* Unity Plugin: Automatic reject bad wand states
+	* Unity Plugin: Fixed multiple small issues with 3d API integration
+	* Unity Plugin: Multiple small fixes
+	* Wand Firmware: Multiple small fixes
+
 [0.14.1] 2021-07-19 - TiltFive-SDK-Setup-0.14.1.exe
 	* Improved dark color rendering.
 	* Rotated the default gameboard orientation to match the physical gameboard.

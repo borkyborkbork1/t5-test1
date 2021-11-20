@@ -81,15 +81,6 @@ namespace TiltFive
                     return Z;
             }
         }
-
-        public static bool Validate(WandControlsState wandControlsState)
-        {
-            bool result = true;
-            result &= wandControlsState.Stick.magnitude <= 1f;
-            result &= wandControlsState.Trigger <= 1f;
-            result &= wandControlsState.Trigger >= 0f;
-            return result;
-        }
     }
 
     public static class Input
@@ -411,26 +402,9 @@ namespace TiltFive
 
                 result = NativePlugin.GetControllerState(controllerIndex, ref buttons, stick, ref trigger, ref timestamp);
 
-                if (result != 0)
-                {
-                    wandControlsState = null;
-                }
-                else
-                {
-                    var receivedControlsState = new WandControlsState(timestamp, buttons, new Vector2(stick[0], stick[1]), trigger);
-
-                    // Ignore invalid wand controls states.
-                    if(WandControlsState.Validate(receivedControlsState))
-                    {
-                        wandControlsState = receivedControlsState;
-                    }
-                    else
-                    {
-                        Log.Warn($"Invalid wand controls state received.");
-                        wandControlsState = null;
-                        return false;
-                    }
-                }
+                wandControlsState = (result == 0)
+                    ? new WandControlsState(timestamp, buttons, new Vector2(stick[0], stick[1]), trigger)
+                    : (WandControlsState?) null;
             }
             catch (Exception e)
             {

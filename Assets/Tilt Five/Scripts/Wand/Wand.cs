@@ -30,6 +30,10 @@ namespace TiltFive
     {
         public ControllerIndex controllerIndex;
 
+        public GameObject GripPoint;
+        public GameObject FingertipPoint;
+        public GameObject AimPoint;
+
         // TODO: Think about some accessors for physical attributes of the wand (length, distance to tip, etc)?
     }
 
@@ -121,6 +125,8 @@ namespace TiltFive
 
             private Vector3 fingertipsPosition_GameBoardSpace = DEFAULT_WAND_POSITION_GAME_BOARD_SPACE;
             private Vector3 aimPosition_GameBoardSpace = DEFAULT_WAND_POSITION_GAME_BOARD_SPACE;
+
+            public Vector3 gripPosition_UnityWorldSpace => position_UnityWorldSpace;
             public Vector3 fingertipsPosition_UnityWorldSpace;
             public Vector3 aimPosition_UnityWorldSpace;
 
@@ -132,15 +138,12 @@ namespace TiltFive
                     return;
                 }
 
-                if (wandSettings.drivenObject != null)
-                {
-                    base.Update(wandSettings, scaleSettings, gameBoardSettings);
+                base.Update(wandSettings, scaleSettings, gameBoardSettings);
 
-                    fingertipsPosition_UnityWorldSpace =
-                        GameBoardToWorldSpace(fingertipsPosition_GameBoardSpace, scaleSettings, gameBoardSettings);
-                    aimPosition_UnityWorldSpace
-                        = GameBoardToWorldSpace(aimPosition_GameBoardSpace, scaleSettings, gameBoardSettings);
-                }
+                fingertipsPosition_UnityWorldSpace =
+                    GameBoardToWorldSpace(fingertipsPosition_GameBoardSpace, scaleSettings, gameBoardSettings);
+                aimPosition_UnityWorldSpace
+                    = GameBoardToWorldSpace(aimPosition_GameBoardSpace, scaleSettings, gameBoardSettings);
             }
 
             protected override Vector3 GetDefaultPositionGameBoardSpace(WandSettings settings)
@@ -199,6 +202,33 @@ namespace TiltFive
                 rotation = new Quaternion(rotationResult[0], rotationResult[1], rotationResult[2], rotationResult[3]);
 
                 return result == 0;
+            }
+
+            protected override void SetDrivenObjectTransform(WandSettings settings)
+            {
+                if(GameBoard.TryGetGameboardType(out var gameboardType) && gameboardType == GameboardType.GameboardType_None)
+                {
+                    // TODO: Implement default poses for wands when the glasses lose tracking.
+                    return;
+                }
+
+                if(settings.GripPoint != null)
+                {
+                    settings.GripPoint.transform.position = gripPosition_UnityWorldSpace;
+                    settings.GripPoint.transform.rotation = rotation_UnityWorldSpace;
+                }
+
+                if (settings.FingertipPoint != null)
+                {
+                    settings.FingertipPoint.transform.position = fingertipsPosition_UnityWorldSpace;
+                    settings.FingertipPoint.transform.rotation = rotation_UnityWorldSpace;
+                }
+
+                if (settings.AimPoint != null)
+                {
+                    settings.AimPoint.transform.position = aimPosition_UnityWorldSpace;
+                    settings.AimPoint.transform.rotation = rotation_UnityWorldSpace;
+                }
             }
         }
 

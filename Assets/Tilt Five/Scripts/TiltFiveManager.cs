@@ -79,6 +79,10 @@ namespace TiltFive
             // adjust theCamera's far clip plane wrt the contentScale (e.g. theCamera translation).
             glassesSettings.headPoseCamera.farClipPlane /= (scaleSettings.physicalMetersPerWorldSpaceUnit * gameBoardSettings.gameBoardScale);
 
+            if (!Display.SetApplicationInfo())
+            {
+                enabled = false;
+            }
         }
 
         /// <summary>

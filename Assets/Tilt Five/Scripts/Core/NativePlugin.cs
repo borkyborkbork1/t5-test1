@@ -27,15 +27,34 @@ namespace TiltFive
         public const string PLUGIN_LIBRARY = @"TiltFiveUnity";
 #endif
 
+        // Init
+        [DllImport(PLUGIN_LIBRARY)]
+        public static extern int SetApplicationInfo(
+            System.IntPtr pAppName,     // Pointer to a byte array containing UTF-8 string data
+            System.IntPtr pAppId,       // Pointer to a byte array containing UTF-8 string data
+            System.IntPtr pAppVersion); // Pointer to a byte array containing UTF-8 string data
+
         // Glasses Availability
         [DllImport(PLUGIN_LIBRARY)]
-        public static extern int RefreshGlassesAvailable();        
+        public static extern int RefreshGlassesAvailable();
 
         // Head Pose
         [DllImport(PLUGIN_LIBRARY)]
         public static extern int GetGlassesPose(
             [MarshalAs(UnmanagedType.LPArray, SizeConst = 4)] float[] rotToGLS_WRLD,
             [MarshalAs(UnmanagedType.LPArray, SizeConst = 3)] float[] posGLS_WRLD);
+
+        // Gameboard type
+        [DllImport(PLUGIN_LIBRARY)]
+        public static extern int GetGameboardType(
+            [MarshalAs(UnmanagedType.I4)] ref GameboardType gameboardType);
+
+        // Gameboard dimensions
+        [DllImport(PLUGIN_LIBRARY)]
+        public static extern int GetGameboardDimensions(
+            [MarshalAs(UnmanagedType.I4)] GameboardType gameboardType,
+            [MarshalAs(UnmanagedType.LPArray, SizeConst = 2)] ref float[] playableSpaceInMeters,
+            ref float borderWidthInMeters);
 
         // Wand Availability
         [DllImport(PLUGIN_LIBRARY)]
@@ -96,6 +115,9 @@ namespace TiltFive
         public static extern int GetMaxDisplayDimensions(
             [MarshalAs(UnmanagedType.LPArray, SizeConst = 2)] int[] displayDimensions);
 
+        [DllImport(PLUGIN_LIBRARY)]
+        public static extern int GetGlassesIPD(ref float glassesIPD);
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport ("__Internal")]
         public static extern void RegisterPlugin();
@@ -118,6 +140,27 @@ namespace TiltFive
         /// The wand held in the player's non-dominant hand.
         /// </summary>
         Secondary = 1
+    }
+
+    public enum GameboardType : Int32
+    {
+        /// <summary>
+        /// No Gameboard at all.
+        /// </summary>
+        /// <remarks>
+        /// If the glasses pose is in respect to GameboardType.GameboardType_None
+        /// </remarks>
+        GameboardType_None = 0,
+
+        /// <summary>
+        /// The LE Gameboard.
+        /// </summary>
+        GameboardType_LE = 1,
+
+        /// <summary>
+        /// The XE Gameboard.
+        /// </summary>
+        GameboardType_XE = 2
     }
 
     public enum ControllerPosition : Int32

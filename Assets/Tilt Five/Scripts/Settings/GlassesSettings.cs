@@ -34,7 +34,7 @@ namespace TiltFive
         public const float MAX_FOV = 64f;
         public const float DEFAULT_FOV = 48f;
 
-        public const float IPD_UGBL = 0.059f;
+        public const float DEFAULT_IPD_UGBL = 0.059f;
 
         public bool overrideFOV = false;
         public float customFOV = DEFAULT_FOV;
@@ -43,5 +43,8 @@ namespace TiltFive
             : DEFAULT_FOV;
 
         public GlassesMirrorMode glassesMirrorMode = GlassesMirrorMode.LeftEye;
+
+        public bool usePreviewPose = true;
+        public Transform previewPose;
     }
 }
