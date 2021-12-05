@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
     public int enemyDropSpacingMin = 5;
     public int enemyDropSpacingMax = 10;
     public string planeDirection = "vertical";
+	public static bool isGamePaused = false;
+	public GameObject pauseMenu;
 
 
     private bool spawnComplete = true;
@@ -23,10 +25,11 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //Time.timeScale = 0;
+        Pause();
 
         Debug.Log("wand available:"+T5Input.GetWandAvailability());
 
+		
 
         if (T5Input.GetWandAvailability()){
             T5Wand = GameObject.Find ("TiltFiveWand");
@@ -35,16 +38,23 @@ public class GameController : MonoBehaviour
 
 
         }
-
-        //set AudioPosition based on if the wand & glasses are being used
-
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (spawnComplete == true) {
+        
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			if (isGamePaused) {
+				Resume();
+			} else {
+				Pause();
+			}
+		}
+		
+		
+		if (spawnComplete == true) {
 
             int numberOfPlanes = GameObject.FindObjectsOfType(typeof(AirplaneController)).Length;
             Debug.Log("number of planes left:"+numberOfPlanes);
@@ -116,4 +126,19 @@ public class GameController : MonoBehaviour
     IEnumerator waitAFewSeconds () {
         yield return new WaitForSeconds (2f);
     }
+
+
+	void Resume(){
+		pauseMenu.SetActive(false);
+		Time.timeScale = 1f;
+		isGamePaused = false;
+	}
+
+	void Pause(){
+		pauseMenu.SetActive(true);
+		Time.timeScale = 0f;
+		isGamePaused = true;
+	}
+
+
 }
