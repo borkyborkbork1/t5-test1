@@ -12,12 +12,15 @@ public class CannonBallController : MonoBehaviour
     private GameObject T5Wand;
     private GameObject T5Glasses;
     private Vector3 AudioPosition;
-
+    private GameController gc;
     void Start(){
         if (T5Input.GetWandAvailability()){
             T5Wand = GameObject.Find ("TiltFiveWand");
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
         }
+
+		GameObject GameController = GameObject.Find("GameController");
+        gc = GameController.GetComponent<GameController>();
     }
 
     void OnCollisionEnter(Collision collision){
@@ -62,11 +65,13 @@ public class CannonBallController : MonoBehaviour
                         collision.transform.Find("parachute").gameObject.SetActive(false);
 
                         AudioSource.PlayClipAtPoint(enemyFalling, AudioPosition, .1f);
-                        Debug.Log("Shot Enemy Distance to ground supposed to be >= 2 but is actually:"+enemyDown.distance);
+                        //Debug.Log("Shot Enemy Distance to ground supposed to be >= 2 but is actually:"+enemyDown.distance);
  
                     } else {
                         //enemy hit while on ground
                         AudioSource.PlayClipAtPoint(enemyDied, AudioPosition, volume);
+						
+						gc.score = gc.score+1;
                         Destroy(collision.gameObject);
                         Destroy(this.gameObject);
                         

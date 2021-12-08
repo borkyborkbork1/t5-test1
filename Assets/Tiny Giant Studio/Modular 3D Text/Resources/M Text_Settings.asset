@@ -19,8 +19,7 @@ MonoBehaviour:
   defaultFont: {fileID: 11400000, guid: b84e8d9dd1738e8449b67d14cb27ff09, type: 2}
   defaultTextSize: {x: 8, y: 8, z: 2}
   defaultTextMaterial: {fileID: 2100000, guid: 323309279f3626a4ba74c611555546c5, type: 2}
-  defaultBackgroundMaterial: {fileID: 2100000, guid: 36ed2e46e752ade4e80ac1daa11593ce,
-    type: 2}
+  defaultBackgroundMaterial: {fileID: 2100000, guid: 36ed2e46e752ade4e80ac1daa11593ce, type: 2}
   autoCreateInEditorMode: 1
   autoCreateInPlayMode: 1
   vertexDensity: 1

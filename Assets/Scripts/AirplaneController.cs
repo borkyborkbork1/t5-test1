@@ -6,19 +6,19 @@ public class AirplaneController : MonoBehaviour
 {
     float speed = 5;
     public GameObject Enemy;
-    private GameController GameControllerScript;
+    private GameController gc;
     
     // Start is called before the first frame update
     void Start()
     {        
         //Grab gamecontroller gameobject
         GameObject GameController = GameObject.Find("GameController");
-        GameControllerScript = GameController.GetComponent<GameController>();
+        gc = GameController.GetComponent<GameController>();
 
         //spawn enemy parachutists
         //-- (Pass in number, min & max seconds between)
         //spacing really controlls how many are spawned due to plane being destroyed when it gets offscreen
-        StartCoroutine(SpawnEnemies(100, GameControllerScript.enemyDropSpacingMin, GameControllerScript.enemyDropSpacingMax));
+        StartCoroutine(SpawnEnemies(100, gc.enemyDropSpacingMin, gc.enemyDropSpacingMax));
     }
 
     // Update is called once per frame
@@ -26,7 +26,7 @@ public class AirplaneController : MonoBehaviour
     {
         
         //move plane
-        if (GameControllerScript.planeDirection == "vertical"){
+        if (gc.planeDirection == "vertical"){
             gameObject.transform.Translate(Vector3.back * Time.deltaTime * speed, Space.World);
             //kill off plane after it does it's pass
             if (gameObject.transform.position.z <= -40f){

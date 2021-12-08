@@ -24,12 +24,9 @@ public class CannonController : MonoBehaviour
 
     void Start(){
         
-        if (T5Input.GetWandAvailability()){
-            T5Wand = GameObject.Find ("TiltFiveWand");
-            T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
-        }
-
-        //set AudioPosition based on if the wand & glasses are being used
+		T5Wand = GameObject.Find ("TiltFiveWand");
+		T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
+		
         if (T5Input.GetWandAvailability()){
             //Debug.Log(T5Glasses.transform.position.x +"-"+ T5Glasses.transform.position.y +"-"+ T5Glasses.transform.position.z);
             AudioPosition=T5Glasses.transform.position;
@@ -73,9 +70,9 @@ public class CannonController : MonoBehaviour
                     //Debug.Log("Shot off!!");
                 }
             } else if (T5Input.GetButton(T5Input.WandButton.System)){
-                Debug.Log("Quitting application!!");
-                Time.timeScale = 0; //Stop application frame processing
-                Application.Quit();
+                Debug.Log("System Button!!");
+                //Time.timeScale = 0; //Stop application frame processing
+                //Application.Quit();
             }
         
         } else {

@@ -16,6 +16,7 @@ public class EnemyController : MonoBehaviour
     private GameObject T5Wand;
     private GameObject T5Glasses;
     private Vector3 AudioPosition;
+	private GameController gc;
     
     private Rigidbody rb;
 
@@ -24,8 +25,10 @@ public class EnemyController : MonoBehaviour
             T5Wand = GameObject.Find ("TiltFiveWand");
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
         }
+		
+		GameObject GameController = GameObject.Find("GameController");
+		gc = GameController.GetComponent<GameController>();
     }
-
     void FixedUpdate() {
         //Only raycast for layer 7 (ground layer)
         LayerMask layerMask = 1 << 7;
@@ -46,6 +49,7 @@ public class EnemyController : MonoBehaviour
                     if (T5Input.GetWandAvailability()){
                         AudioSource.PlayClipAtPoint(enemyHitGround, T5Glasses.transform.position, 1f);
                     }
+					gc.score = gc.score+1;
                     Destroy(this.gameObject);
                 }
 
@@ -76,14 +80,11 @@ public class EnemyController : MonoBehaviour
 
         if (collision.gameObject.name == "Cannon"){
             //if enemy hits cannon 
-            GameObject gameController = GameObject.Find("GameController");
-            GameController gc = gameController.GetComponent<GameController>();
             gc.cannonDamage += 1;
             AudioSource.PlayClipAtPoint(enemyReachesCannon, AudioPosition, 1f);
              
             //GameObject ExplosionInstance=Instantiate(Explosion, gameObject.transform.position, Quaternion.identity);
             //Destroy(ExplosionInstance,4);
-
             Destroy(this.gameObject);   
 
         } else {

@@ -1,17 +1,27 @@
 using System.Collections;
 using UnityEngine;
 using T5Input = TiltFive.Input;
+using MText;
 
 public class GameController : MonoBehaviour
 {
 
     public int cannonDamage = 0;
-    public int planeWaves = 1;
+    public int planeWaves = 0;  //Displayed as level in the game
+    public int score = 0;
     public int enemyDropSpacingMin = 5;
     public int enemyDropSpacingMax = 10;
     public string planeDirection = "vertical";
 	public static bool isGamePaused = false;
+
+	
+	public GameObject wallLeft;
+	public GameObject wallRight;
 	public GameObject pauseMenu;
+	public GameObject gameoverMenu;
+	public Modular3DText ScoreUI;
+	public Modular3DText CannonDamageUI;
+	public Modular3DText LevelUI;
 
 
     private bool spawnComplete = true;
@@ -25,18 +35,12 @@ public class GameController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Pause();
-
-        Debug.Log("wand available:"+T5Input.GetWandAvailability());
-
-		
+        // show title screen on start
+		Pause();
 
         if (T5Input.GetWandAvailability()){
             T5Wand = GameObject.Find ("TiltFiveWand");
             T5Glasses = GameObject.FindWithTag ("T5Glasses"); 
-
-
-
         }
         
     }
@@ -44,49 +48,73 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+        // title and pause menu
+		if (Input.GetKeyDown(KeyCode.Escape) || (T5Input.GetButtonUp(T5Input.WandButton.System)) ) {
 			if (isGamePaused) {
 				Resume();
 			} else {
 				Pause();
 			}
 		}
-		
+
+		if (T5Input.GetButtonUp(T5Input.WandButton.One)){
+			//If game is paused and one button is hit then quit game
+			if (isGamePaused) {
+				Application.Quit();
+			}
+		}
 		
 		if (spawnComplete == true) {
 
             int numberOfPlanes = GameObject.FindObjectsOfType(typeof(AirplaneController)).Length;
-            Debug.Log("number of planes left:"+numberOfPlanes);
+            //Debug.Log("number of planes left:"+numberOfPlanes);
 
             //dont start new wave till all planes are gone
-            if (planeWaves == 1 && numberOfPlanes <= 0) {
-                Debug.Log("Starting planewave: "+planeWaves);
-                spawnComplete = false;
-                enemyDropSpacingMin = 5;
-                enemyDropSpacingMax = 10;
-                //Start the creating planes
-                //-- (number of planes, minimum, max for random seconds between them) 
-                planeDirection = "vertical";
-                airplaneRotation = Quaternion.Euler(0, -90, 0);//vertical
-                StartCoroutine(SpawnPlanes(2,5,6));
-            } else if (planeWaves == 2 && numberOfPlanes <= 0){
+			if (numberOfPlanes <= 0) {
+				planeWaves=planeWaves+1;
+                //Debug.Log("Starting planewave: "+planeWaves);
 
-                Debug.Log("Starting planewave: "+planeWaves);
-                spawnComplete = false;
-                enemyDropSpacingMin = 2;
-                enemyDropSpacingMax = 5;
-                planeDirection = "horizontal";
-                airplaneRotation = Quaternion.Euler(0, 180, 0);//horizontal
-                StartCoroutine(SpawnPlanes(5,2,3));
-               
-            }
+				if (planeWaves >= 15){
+					enemyDropSpacingMin = 1;
+					enemyDropSpacingMax = 5;
+				} else if (planeWaves >= 10) {
+					enemyDropSpacingMin = 3;
+					enemyDropSpacingMax = 6;
+					//wallRight.SetActive(false);
+					//wallLeft.SetActive(false);
+				} else if (planeWaves >= 5) {
+					enemyDropSpacingMin = 4;
+					enemyDropSpacingMax = 6;
+					//wallRight.SetActive(false);
+					//wallLeft.SetActive(true);
+				} else if (planeWaves >= 2) {
+					enemyDropSpacingMin = 4;
+					enemyDropSpacingMax = 8;
+					//TODO: Figure out dynamic mesh calc
+					//wallLeft.SetActive(false);
+				}
+
+
+				if (planeWaves % 2 == 1){
+					planeDirection = "vertical";	
+					airplaneRotation = Quaternion.Euler(0, -90, 0);//vertical
+				} else {
+					planeDirection = "horizontal";
+					airplaneRotation = Quaternion.Euler(0, 180, 0);//horizontal
+				}
+				StartCoroutine(SpawnPlanes(planeWaves+1,enemyDropSpacingMin,enemyDropSpacingMax));
+			}
         }
-        
-        
-        if (cannonDamage == 5){
+        //Update UI
+		ScoreUI.Text = "Score: " + score.ToString();
+		CannonDamageUI.Text = "Cannon Damage: " + cannonDamage.ToString();
+		LevelUI.Text = "Level: " + planeWaves.ToString();
+
+
+        if (cannonDamage == 100){
+			// TODO: allow for restart from gameover screen
             Debug.Log("*** Game Over ***");
-            Time.timeScale = 0;
+			PauseGameover();
         }
     }
 
@@ -95,7 +123,7 @@ public class GameController : MonoBehaviour
     IEnumerator SpawnPlanes(int number,int minSpacing,int maxSpacing){
         for (int i = 0; i < number; i++){ 
 
-            Debug.Log("Plane Spawn/Number: " + i + "/" + number);
+           //Debug.Log("Plane Spawn/Number: " + i + "/" + number);
 
             //space planes randomly between passed min/max seconds
             float spacing = Random.Range(minSpacing, maxSpacing); 
@@ -115,7 +143,6 @@ public class GameController : MonoBehaviour
             if (i >= number-1){
                 //if this wave is complete set boolean and increment wave count
                 spawnComplete = true;
-                planeWaves = planeWaves + 1;
             }
 
         }
@@ -140,5 +167,9 @@ public class GameController : MonoBehaviour
 		isGamePaused = true;
 	}
 
-
+	void PauseGameover(){
+		gameoverMenu.SetActive(true);
+		Time.timeScale = 0f;
+		isGamePaused = true;
+	}
 }
